@@ -1,0 +1,4 @@
+include ':emv-core'
+include ':cardreaderlibrary'
+include ':app'
+rootProject.name = "NFCCardReader"
