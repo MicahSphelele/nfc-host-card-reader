@@ -16,7 +16,7 @@ public enum EMVTags {
     N_ATC_TRACK1("N ATC Track 1 data", new byte[]{(byte) 0x9F, (byte) 0x64}),
     P_UN_ATC_TRACK2("N ATC Track 2 data", new byte[]{(byte) 0x9F, (byte) 0x66}),
     N_ATC_TRACK2("N ATC Track 2 data", new byte[]{(byte) 0x9F, (byte) 0x67}),
-    APPLICATION_LABEL("Application Label", new byte[]{0x50}),
+    APPLICATION_LABEL("Application Label", new byte[]{(byte) 0x50}),
     APPLICATION_PAN("Application (Primary Account Number)", new byte[]{0x5A}),
     CARDHOLDER_NAME("Cardholder Name", new byte[]{(byte) 0x5F, (byte) 0x20}),
     APPLICATION_EXPIRATION_DATE("Application Expiration Date", new byte[]{(byte) 0x5F, (byte) 0x24}),

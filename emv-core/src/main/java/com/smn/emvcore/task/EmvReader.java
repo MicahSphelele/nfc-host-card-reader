@@ -5,9 +5,11 @@ import com.smn.emvcore.enums.EmvCardType;
 import com.smn.emvcore.interfaces.ResultsListener;
 import com.smn.emvcore.interfaces.Transceiver;
 import com.smn.emvcore.logger.EmvLogger;
+import com.smn.emvcore.utils.AidUtil;
 import com.smn.emvcore.utils.EmvUtil;
 import com.smn.emvcore.utils.HexUtil;
 import com.smn.emvcore.utils.PseUtil;
+import com.smn.emvcore.utils.TlvUtil;
 
 import java.io.ByteArrayInputStream;
 import java.util.Arrays;
@@ -129,7 +131,6 @@ public class EmvReader implements Runnable {
         // AID (Application Identifier)
         if (aid == null && pseSucceeded) {
 
-
             ByteArrayInputStream byteArrayInputStream = null;
 
             try {
@@ -179,12 +180,12 @@ public class EmvReader implements Runnable {
                             if (Arrays.equals(resultRes, EmvCardType.Mastercard.getAidPrefix())) {
                                 isPayPass = true;
                                 aid = resultRes;
-                                this.emvLogger.info("AID Mastercard= " + HexUtil.bytesToHexadecimal(aid));
+                                this.emvLogger.info("AID Mastercard = " + HexUtil.bytesToHexadecimal(aid));
 
                             } else if (Arrays.equals(resultRes, EmvCardType.Maestro.getAidPrefix())) {
                                 isPayPass = true;
                                 aid = resultRes;
-                                this.emvLogger.info("AID Maestro= " + HexUtil.bytesToHexadecimal(aid));
+                                this.emvLogger.info("AID Maestro = " + HexUtil.bytesToHexadecimal(aid));
                             } else if (Arrays.equals(resultRes, EmvCardType.Visa.getAidPrefix())) {
                                 isPayWave = true;
                                 aid = resultRes;
@@ -192,7 +193,7 @@ public class EmvReader implements Runnable {
                             } else if (Arrays.equals(resultRes, EmvCardType.VisaElectron.getAidPrefix())) {
                                 isPayWave = true;
                                 aid = resultRes;
-                                this.emvLogger.info("AID Visa Electron= " + HexUtil.bytesToHexadecimal(aid));
+                                this.emvLogger.info("AID Visa Electron = " + HexUtil.bytesToHexadecimal(aid));
                             } else {
                                 this.emvLogger.error("Cannot identify card = " + HexUtil.bytesToHexadecimal(resultRes));
                             }
@@ -275,12 +276,6 @@ public class EmvReader implements Runnable {
                                     aid = resultRes;
                                     this.emvLogger.error("Cannot identify card = " + HexUtil.bytesToHexadecimal(resultRes));
                                 }
-
-                                if (aid != null) {
-                                    listener.onSuccess(HexUtil.bytesToHexadecimal(aid));
-                                    return;
-                                }
-                                listener.onError("Unable to get AID");
                             }
                         }
                     }
@@ -294,5 +289,100 @@ public class EmvReader implements Runnable {
                 }
             }
         }
+
+        // FCI (File Control Information)
+        byte[] commFileControlInfor = null;
+        byte[] respFileControlInfor = null;
+
+        if (Arrays.equals(aid, EmvCardType.Mastercard.getAidPrefix())) {
+
+            commFileControlInfor = AidUtil.selectAid(EmvCardType.Mastercard.getAidPrefix());
+
+            if (commFileControlInfor != null) {
+
+                try {
+
+                    respFileControlInfor = this.transceiver.transceive(AidUtil.selectAid(EmvCardType.Mastercard.getAidPrefix()));
+
+                } catch (Exception e) {
+                    this.emvLogger.error(e);
+                }
+            }
+
+        } else if (Arrays.equals(aid, EmvCardType.Maestro.getAidPrefix())) {
+            commFileControlInfor = AidUtil.selectAid(EmvCardType.Maestro.getAidPrefix());
+
+            if (commFileControlInfor != null) {
+
+                try {
+
+                    respFileControlInfor = this.transceiver.transceive(AidUtil.selectAid(EmvCardType.Maestro.getAidPrefix()));
+
+                } catch (Exception e) {
+                    this.emvLogger.error(e);
+                }
+            }
+        } else if (Arrays.equals(aid, EmvCardType.Visa.getAidPrefix())) {
+            commFileControlInfor = AidUtil.selectAid(EmvCardType.Visa.getAidPrefix());
+
+            if (commFileControlInfor != null) {
+
+                try {
+
+                    respFileControlInfor = this.transceiver.transceive(AidUtil.selectAid(EmvCardType.Visa.getAidPrefix()));
+
+                } catch (Exception e) {
+                    this.emvLogger.error(e);
+                }
+            }
+        } else if (Arrays.equals(aid, EmvCardType.VisaElectron.getAidPrefix())) {
+            commFileControlInfor = AidUtil.selectAid(EmvCardType.VisaElectron.getAidPrefix());
+
+            if (commFileControlInfor != null) {
+
+                try {
+
+                    respFileControlInfor = this.transceiver.transceive(AidUtil.selectAid(EmvCardType.VisaElectron.getAidPrefix()));
+
+                } catch (Exception e) {
+                    this.emvLogger.error(e);
+                }
+            }
+        } else {
+            commFileControlInfor = AidUtil.selectAid(aid);
+            try {
+
+                respFileControlInfor = this.transceiver.transceive(aid);
+
+            } catch (Exception e) {
+                this.emvLogger.error(e);
+            }
+            this.emvLogger.error("Unknown file control");
+        }
+
+        if (commFileControlInfor != null) {
+            emvLogger.info("EMV (C-APDU) - Command: Select FCI (File Control Information); Data: FCI (File Control Information) Hexadecimal: " + HexUtil.bytesToHexadecimal(commFileControlInfor));
+        }
+
+        if (respFileControlInfor != null) {
+            emvLogger.info("EMV (R-APDU) - Command: Select FCI (File Control Information); Data:  Hexadecimal: " + HexUtil.bytesToHexadecimal(respFileControlInfor));
+        }
+
+        // Application Label (May be ASCII convertible)
+        if (applicationLabel == null) {
+
+            applicationLabel = new TlvUtil().getTlvValue(respFileControlInfor, EMVTags.APPLICATION_LABEL.getBytes());
+
+            if (applicationLabel != null) {
+                emvLogger.info("Application Label  = " + applicationLabel.length);
+            }
+
+        }
+
+        if (aid != null) {
+            listener.onSuccess(HexUtil.bytesToHexadecimal(aid));
+            return;
+        }
+        listener.onError("Unable to get AID");
     }
 }
