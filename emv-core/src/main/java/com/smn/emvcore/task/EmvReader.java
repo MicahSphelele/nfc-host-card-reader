@@ -19,11 +19,9 @@ public class EmvReader implements Runnable {
     private final ResultsListener listener;
 
     public EmvReader(Transceiver transceiver, EmvLogger emvLogger, ResultsListener listener) {
-
         this.transceiver = transceiver;
         this.emvLogger = emvLogger;
         this.listener = listener;
-
     }
 
     @Override
@@ -128,23 +126,19 @@ public class EmvReader implements Runnable {
         byte[] applicationExpirationDate = null; // Application Expiration Date
         // - TLV Extractable Data
 
-        this.emvLogger.info("Get AID");
         // AID (Application Identifier)
         if (aid == null && pseSucceeded) {
 
-            this.emvLogger.info("Get AID");
+
             ByteArrayInputStream byteArrayInputStream = null;
-            this.emvLogger.info("Get AID = 2");
+
             try {
-                this.emvLogger.info("Get AID = 3");
                 byteArrayInputStream = new ByteArrayInputStream(respPaymentSystemEnvironment);
             } catch (Exception e) {
                 this.emvLogger.error(e);
             }
 
             if (byteArrayInputStream != null) {
-
-                this.emvLogger.info("Get AID = 4");
 
                 if (byteArrayInputStream.available() < 2) {
                     this.emvLogger.error("Cannot preform TLV byte array stream actions");
@@ -157,10 +151,8 @@ public class EmvReader implements Runnable {
 
                 byte[] aidTlvTagLength = new byte[EMVTags.AID.getBytes().length];
 
-                this.emvLogger.info("Get AID = 6");
-
                 while (byteArrayInputStream.read() != -1) {
-                    this.emvLogger.info("Get AID = index " + index);
+
                     index += 1;
 
                     if (index >= EMVTags.AID.getBytes().length) {
@@ -169,7 +161,7 @@ public class EmvReader implements Runnable {
                     }
 
                     if (Arrays.equals(EMVTags.AID.getBytes(), aidTlvTagLength)) {
-                        this.emvLogger.info("resultSize = byteArrayInputStream.read()");
+
                         resultSize = byteArrayInputStream.read();
                     }
 
@@ -189,7 +181,7 @@ public class EmvReader implements Runnable {
                                 aid = resultRes;
                                 this.emvLogger.info("AID Mastercard= " + HexUtil.bytesToHexadecimal(aid));
 
-                            } else if (Arrays.equals(resultRes,EmvCardType.Maestro.getAidPrefix())) {
+                            } else if (Arrays.equals(resultRes, EmvCardType.Maestro.getAidPrefix())) {
                                 isPayPass = true;
                                 aid = resultRes;
                                 this.emvLogger.info("AID Maestro= " + HexUtil.bytesToHexadecimal(aid));
@@ -202,22 +194,19 @@ public class EmvReader implements Runnable {
                                 aid = resultRes;
                                 this.emvLogger.info("AID Visa Electron= " + HexUtil.bytesToHexadecimal(aid));
                             } else {
-                                this.emvLogger.error("Do not identify card = " + HexUtil.bytesToHexadecimal(resultRes));
+                                this.emvLogger.error("Cannot identify card = " + HexUtil.bytesToHexadecimal(resultRes));
                             }
                         }
                     }
                 }
 
                 try {
-
                     byteArrayInputStream.close();
                     emvLogger.debug("byteArrayInputStream.close()");
                 } catch (Exception e) {
                     this.emvLogger.error(e);
                 }
             }
-        }else {
-            this.emvLogger.error("No Data for step 1");
         }
 
         if (aid == null && ppseSucceeded) {
@@ -233,62 +222,65 @@ public class EmvReader implements Runnable {
             }
 
             if (byteArrayInputStream != null) {
+
                 if (byteArrayInputStream.available() < 2) {
-                    try {
-                        throw new Exception("Cannot preform TLV byte array stream actions, available bytes < 2; Length is " + byteArrayInputStream.available());
-                    } catch (Exception e) {
-                        this.emvLogger.error(e);
+                    this.emvLogger.error("Cannot preform TLV byte array stream actions");
+                    listener.onError("Cannot preform TLV byte array stream actions");
+                    return;
+                }
+
+                int i = 0, resultSize;
+
+                byte[] aidTlvTagLength = new byte[EMVTags.AID.getBytes().length];
+
+                while (byteArrayInputStream.read() != -1) {
+
+                    i += 1;
+
+                    if (i >= EMVTags.AID.getBytes().length) {
+                        aidTlvTagLength = Arrays.copyOfRange(respProximityPaymentSystemEnvironment, i - EMVTags.AID.getBytes().length, i);
                     }
-                } else {
-                    int i = 0, resultSize;
 
-                    byte[] aidTlvTagLength = new byte[EMVTags.AID.getBytes().length];
+                    if (Arrays.equals(EMVTags.AID.getBytes(), aidTlvTagLength)) {
+                        resultSize = byteArrayInputStream.read();
 
-                    while (byteArrayInputStream.read() != -1) {
-
-                        i += 1;
-
-                        if (i >= EMVTags.AID.getBytes().length) {
-                            aidTlvTagLength = Arrays.copyOfRange(respProximityPaymentSystemEnvironment, i - EMVTags.AID.getBytes().length, i);
+                        if (resultSize > byteArrayInputStream.available()) {
+                            continue;
                         }
 
-                        if (Arrays.equals(EMVTags.AID.getBytes(), aidTlvTagLength)) {
-                            resultSize = byteArrayInputStream.read();
+                        if (resultSize != -1) {
 
-                            if (resultSize > byteArrayInputStream.available()) {
-                                continue;
-                            }
+                            byte[] resultRes = new byte[resultSize];
 
-                            if (resultSize != -1) {
+                            if (byteArrayInputStream.read(resultRes, 0, resultSize) != 0) {
 
-                                byte[] resultRes = new byte[resultSize];
+                                if (Arrays.equals(resultRes, EmvCardType.Mastercard.getAidPrefix())) {
+                                    isPayPass = true;
+                                    aid = resultRes;
+                                    this.emvLogger.info("AID Mastercard = " + HexUtil.bytesToHexadecimal(aid));
 
-                                if (byteArrayInputStream.read(resultRes, 0, resultSize) != 0) {
-
-                                    if (Arrays.equals(resultRes, EmvCardType.Mastercard.getAidPrefix())) {
-                                        isPayPass = true;
-                                        aid = resultRes;
-                                        this.emvLogger.info("AID Mastercard= " + HexUtil.bytesToHexadecimal(aid));
-
-                                    } else if (Arrays.equals(resultRes,EmvCardType.Maestro.getAidPrefix())) {
-                                        isPayPass = true;
-                                        aid = resultRes;
-                                        this.emvLogger.info("AID Maestro= " + HexUtil.bytesToHexadecimal(aid));
-                                    } else if (Arrays.equals(resultRes, EmvCardType.Visa.getAidPrefix())) {
-                                        isPayWave = true;
-                                        aid = resultRes;
-                                        this.emvLogger.info("AID Visa = " + HexUtil.bytesToHexadecimal(aid));
-                                    } else if (Arrays.equals(resultRes, EmvCardType.VisaElectron.getAidPrefix())) {
-                                        isPayWave = true;
-                                        aid = resultRes;
-                                        this.emvLogger.info("AID Visa Electron= " + HexUtil.bytesToHexadecimal(aid));
-                                    } else {
-                                        aid = resultRes;
-                                        this.emvLogger.error("Do not identify card = " + HexUtil.bytesToHexadecimal(resultRes));
-                                    }
-
-                                    listener.onSuccess(HexUtil.bytesToHexadecimal(aid));
+                                } else if (Arrays.equals(resultRes, EmvCardType.Maestro.getAidPrefix())) {
+                                    isPayPass = true;
+                                    aid = resultRes;
+                                    this.emvLogger.info("AID Maestro = " + HexUtil.bytesToHexadecimal(aid));
+                                } else if (Arrays.equals(resultRes, EmvCardType.Visa.getAidPrefix())) {
+                                    isPayWave = true;
+                                    aid = resultRes;
+                                    this.emvLogger.info("AID Visa = " + HexUtil.bytesToHexadecimal(aid));
+                                } else if (Arrays.equals(resultRes, EmvCardType.VisaElectron.getAidPrefix())) {
+                                    isPayWave = true;
+                                    aid = resultRes;
+                                    this.emvLogger.info("AID Visa Electron = " + HexUtil.bytesToHexadecimal(aid));
+                                } else {
+                                    aid = resultRes;
+                                    this.emvLogger.error("Cannot identify card = " + HexUtil.bytesToHexadecimal(resultRes));
                                 }
+
+                                if (aid != null) {
+                                    listener.onSuccess(HexUtil.bytesToHexadecimal(aid));
+                                    return;
+                                }
+                                listener.onError("Unable to get AID");
                             }
                         }
                     }
@@ -296,7 +288,7 @@ public class EmvReader implements Runnable {
 
                 try {
                     byteArrayInputStream.close();
-                    this.emvLogger.error("byteArrayInputStream.close() 2");
+                    this.emvLogger.debug("byteArrayInputStream.close()");
                 } catch (Exception e) {
                     this.emvLogger.error(e);
                 }
