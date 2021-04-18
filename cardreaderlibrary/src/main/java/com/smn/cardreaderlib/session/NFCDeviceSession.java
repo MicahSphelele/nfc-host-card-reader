@@ -14,7 +14,7 @@ import com.smn.cardreaderlib.interfaces.NFCDevice;
 import com.smn.cardreaderlib.utils.nfc.NFCReader;
 import com.smn.emvcore.interfaces.ResultsListener;
 import com.smn.emvcore.logger.EmvLogger;
-import com.smn.emvcore.task.EmvReader;
+import com.smn.emvcore.reader.EmvReader;
 
 import org.jetbrains.annotations.NotNull;
 

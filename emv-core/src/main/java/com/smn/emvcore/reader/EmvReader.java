@@ -1,4 +1,4 @@
-package com.smn.emvcore.task;
+package com.smn.emvcore.reader;
 
 import com.smn.emvcore.enums.EmvTags;
 import com.smn.emvcore.enums.EmvCardType;
