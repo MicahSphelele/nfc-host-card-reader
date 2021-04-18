@@ -1,6 +1,6 @@
 package com.smn.emvcore.enums;
 
-public enum EMVTags {
+public enum EmvTags {
 
     AID("Application Identifier", new byte[]{(byte) 0x4F}),
     PDOL("Processing Options Data Object List",
@@ -34,7 +34,7 @@ public enum EMVTags {
     private final byte[] bytes;
     private final String description;
 
-    EMVTags(String description, byte[] bytes) {
+    EmvTags(String description, byte[] bytes) {
         this.bytes = bytes;
         this.description = description;
     }

@@ -1,6 +1,6 @@
 package com.smn.emvcore.utils;
 
-import com.smn.emvcore.enums.EMVTags;
+import com.smn.emvcore.enums.EmvTags;
 import com.smn.emvcore.enums.SelectCommands;
 import com.smn.emvcore.model.TlvObject;
 
@@ -139,7 +139,7 @@ public class GpoUtil {
                         Date transactionDate = new Date();
 
                         // TTQ (Terminal Transaction Qualifiers); 9F66; 4 Byte(s)
-                        if (Arrays.equals(tlvObject.getTlvTag(), EMVTags.TTQ.getBytes())) {
+                        if (Arrays.equals(tlvObject.getTlvTag(), EmvTags.TTQ.getBytes())) {
                             System.out.println("Generate PDOL -> TTQ (Terminal Transaction Qualifiers); " + "9F66" + "; " + tlvObject.getTlvTagLength() + " Byte(s)");
 
                             byte[] data = new byte[4];
@@ -151,7 +151,7 @@ public class GpoUtil {
                         // - TTQ (Terminal Transaction Qualifiers); 9F66; 4 Byte(s)
 
                         // Amount, Authorised (Numeric); 9F02; 6 Byte(s)
-                        else if (Arrays.equals(tlvObject.getTlvTag(), EMVTags.AMOUNT_AUTHORISED.getBytes())) {
+                        else if (Arrays.equals(tlvObject.getTlvTag(), EmvTags.AMOUNT_AUTHORISED.getBytes())) {
 
                             System.out.println("Generate PDOL -> Amount, Authorised (Numeric); " + "9F02" + "; " + tlvObject.getTlvTagLength() + " Byte(s)");
 
@@ -169,7 +169,7 @@ public class GpoUtil {
                         // - Amount, Authorised (Numeric); 9F02; 6 Byte(s)
 
                         // Amount, Other (Numeric); 9F03; 6 Byte(s)
-                        else if (Arrays.equals(tlvObject.getTlvTag(), EMVTags.AMOUNT_OTHER.getBytes())) {
+                        else if (Arrays.equals(tlvObject.getTlvTag(), EmvTags.AMOUNT_OTHER.getBytes())) {
                             System.out.println("Generate PDOL -> Amount, Other (Numeric); " + "9F03" + "; " + tlvObject.getTlvTagLength() + " Byte(s)");
 
                             resultValue = new byte[tlvObject.getTlvTagLength()];
@@ -186,7 +186,7 @@ public class GpoUtil {
                         // - Amount, Other (Numeric); 9F03; 6 Byte(s)
 
                         // Terminal Country Code; 9F1A; 2 Byte(s)
-                        else if (Arrays.equals(tlvObject.getTlvTag(), EMVTags.TERMINAL_COUNTRY_CODE.getBytes())) {
+                        else if (Arrays.equals(tlvObject.getTlvTag(), EmvTags.TERMINAL_COUNTRY_CODE.getBytes())) {
 
                             System.out.println("Generate PDOL -> Terminal Country Code; " + "9F1A" + "; " + tlvObject.getTlvTagLength() + " Byte(s)");
 
@@ -202,7 +202,7 @@ public class GpoUtil {
                         // - Terminal Country Code; 9F1A; 2 Byte(s)
 
                         // Transaction Currency Code; 5F2A, 2 Byte(s)
-                        else if (Arrays.equals(tlvObject.getTlvTag(), EMVTags.TRANSACTION_CURRENCY_CODE.getBytes())) {
+                        else if (Arrays.equals(tlvObject.getTlvTag(), EmvTags.TRANSACTION_CURRENCY_CODE.getBytes())) {
 
                             System.out.println( "Generate PDOL -> Transaction Currency Code; " + "5F2A" + "; " + tlvObject.getTlvTagLength() + " Byte(s)");
 
@@ -218,7 +218,7 @@ public class GpoUtil {
                         // - Transaction Currency Code; 5F2A, 2 Byte(s)
 
                         // TVR (Transaction Verification Results); 95; 5 Byte(s)
-                        else if (Arrays.equals(tlvObject.getTlvTag(), EMVTags.TVR.getBytes())) {
+                        else if (Arrays.equals(tlvObject.getTlvTag(), EmvTags.TVR.getBytes())) {
 
                            System.out.println("Generate PDOL -> TVR (Transaction Verification Results); " + "95" + "; " + tlvObject.getTlvTagLength() + " Byte(s)");
 
@@ -235,7 +235,7 @@ public class GpoUtil {
                         // - TVR (Transaction Verification Results); 95; 5 Byte(s)
 
                         // Transaction Date; 9A, 3 Byte(s)
-                        else if (Arrays.equals(tlvObject.getTlvTag(), EMVTags.TRANSACTION_DATE.getBytes())) {
+                        else if (Arrays.equals(tlvObject.getTlvTag(), EmvTags.TRANSACTION_DATE.getBytes())) {
                             System.out.println( "Generate PDOL -> Transaction Date; " + "9A" + "; " + tlvObject.getTlvTagLength() + " Byte(s)");
 
                             // "SimpleDateFormat" Reference: https://developer.android.com/reference/java/text/SimpleDateFormat.html
@@ -266,7 +266,7 @@ public class GpoUtil {
                         // - Transaction Date; 9A, 3 Byte(s)
 
                         // Transaction Type; 9C, 1 Byte(s)
-                        else if (Arrays.equals(tlvObject.getTlvTag(), EMVTags.TRANSACTION_TYPE.getBytes())) {
+                        else if (Arrays.equals(tlvObject.getTlvTag(), EmvTags.TRANSACTION_TYPE.getBytes())) {
 
                             System.out.println("Generate PDOL -> Transaction Type; " + "9C" + "; " + tlvObject.getTlvTagLength() + " Byte(s)");
 
@@ -277,7 +277,7 @@ public class GpoUtil {
                         // - Transaction Type; 9C, 1 Byte(s)
 
                         // Transaction Time; 9F21; 3 Byte(s)
-                        else if (Arrays.equals(tlvObject.getTlvTag(), EMVTags.TRANSACTION_TIME.getBytes())) {
+                        else if (Arrays.equals(tlvObject.getTlvTag(), EmvTags.TRANSACTION_TIME.getBytes())) {
 
                             System.out.println("Generate PDOL -> Transaction Date; " + "9F21" + "; " + tlvObject.getTlvTagLength() + " Byte(s)");
 
@@ -309,7 +309,7 @@ public class GpoUtil {
                         // - Transaction Time; 9F21; 3 Byte(s)
 
                         // UN (Unpredictable Number); 9F37, 1 or 4 Byte(s)
-                        else if (Arrays.equals(tlvObject.getTlvTag(), EMVTags.UN.getBytes())) {
+                        else if (Arrays.equals(tlvObject.getTlvTag(), EmvTags.UN.getBytes())) {
                            System.out.println("Generate PDOL -> UN (Unpredictable Number); " + "9F37" + "; " + tlvObject.getTlvTagLength() + " Byte(s)");
 
                             // Generate random unpredictable number

@@ -1,7 +1,7 @@
 package com.smn.emvcore.utils;
 
 
-import com.smn.emvcore.enums.EMVTags;
+import com.smn.emvcore.enums.EmvTags;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -11,63 +11,63 @@ import java.util.Arrays;
 public class DolUtil {
 
     private static final byte[] TTQ = {
-            EMVTags.TTQ.getBytes()[0],
-            EMVTags.TTQ.getBytes()[1],
+            EmvTags.TTQ.getBytes()[0],
+            EmvTags.TTQ.getBytes()[1],
             (byte) 0x04
     }; // TTQ (Terminal Transaction Qualifiers); 2 Byte Tlv Tag with 4 Byte(s)
 
     private static final byte[] AMOUNT_AUTHORISED = {
-            EMVTags.AMOUNT_AUTHORISED.getBytes()[0],
-            EMVTags.AMOUNT_AUTHORISED.getBytes()[1],
+            EmvTags.AMOUNT_AUTHORISED.getBytes()[0],
+            EmvTags.AMOUNT_AUTHORISED.getBytes()[1],
             (byte) 0x06
     }; // Amount, Authorised (Numeric); 2 Byte Tlv Tag with 6 Byte(s)
 
     private static final byte[] AMOUNT_OTHER = {
-            EMVTags.AMOUNT_OTHER.getBytes()[0],
-            EMVTags.AMOUNT_OTHER.getBytes()[1],
+            EmvTags.AMOUNT_OTHER.getBytes()[0],
+            EmvTags.AMOUNT_OTHER.getBytes()[1],
             (byte) 0x06
     }; // Amount, Other (Numeric); 2 Byte Tlv Tag with 6 Byte(s)
 
     private static final byte[] TERMINAL_COUNTRY_CODE = {
-            EMVTags.TERMINAL_COUNTRY_CODE.getBytes()[0],
-            EMVTags.TERMINAL_COUNTRY_CODE.getBytes()[1],
+            EmvTags.TERMINAL_COUNTRY_CODE.getBytes()[0],
+            EmvTags.TERMINAL_COUNTRY_CODE.getBytes()[1],
             (byte) 0x02
     }; // Terminal Country Code; 2 Byte Tlv Tag with 2 Byte(s)
 
     private static final byte[] TRANSACTION_CURRENCY_CODE = {
-            EMVTags.TRANSACTION_CURRENCY_CODE.getBytes()[0],
-            EMVTags.TRANSACTION_CURRENCY_CODE.getBytes()[1],
+            EmvTags.TRANSACTION_CURRENCY_CODE.getBytes()[0],
+            EmvTags.TRANSACTION_CURRENCY_CODE.getBytes()[1],
             (byte) 0x02
     }; // Transaction Currency Code; 2 Byte Tlv Tag with 2 Byte(s)
 
     private static final byte[] TVR = {
-            EMVTags.TVR.getBytes()[0],
+            EmvTags.TVR.getBytes()[0],
             (byte) 0x05
     }; // TVR (Transaction Verification Results); 1 Byte Tlv Tag with 5 Byte(s)
 
     private static final byte[] TRANSACTION_DATE = {
-            EMVTags.TRANSACTION_DATE.getBytes()[0],
+            EmvTags.TRANSACTION_DATE.getBytes()[0],
             (byte) 0x03
     }; // Transaction Date; 1 Byte Tlv Tag with 3 Byte(s)
 
     private static final byte[] TRANSACTION_TYPE = {
-            EMVTags.TRANSACTION_TYPE.getBytes()[0],
+            EmvTags.TRANSACTION_TYPE.getBytes()[0],
             (byte) 0x01
     }; // Transaction Type; 1 Byte Tlv Tag with 1 Byte(s)
 
     private static final byte[] TRANSACTION_TIME = {
-            EMVTags.TRANSACTION_TIME.getBytes()[0],
-            EMVTags.TRANSACTION_TIME.getBytes()[1],
+            EmvTags.TRANSACTION_TIME.getBytes()[0],
+            EmvTags.TRANSACTION_TIME.getBytes()[1],
             (byte) 0x03
     }; // Transaction Time; 2 Byte Tlv Tag with 3 Byte(s)
 
     private static final byte[] UN_LENGTH_1 = {
-            EMVTags.UN.getBytes()[0],
-            EMVTags.UN.getBytes()[1],
+            EmvTags.UN.getBytes()[0],
+            EmvTags.UN.getBytes()[1],
             (byte) 0x01
     }, UN_LENGTH_4 = {
-            EMVTags.UN.getBytes()[0],
-            EMVTags.UN.getBytes()[1],
+            EmvTags.UN.getBytes()[0],
+            EmvTags.UN.getBytes()[1],
             (byte) 0x04
     }; // UN (Unpredictable Number); 2 Byte Tlv Tag with (1 Byte(s) / 4 Byte(s))
 
@@ -77,11 +77,11 @@ public class DolUtil {
         // - Returning result
 
         if (dol != null) {
-            if (Arrays.equals(EMVTags.PDOL.getBytes(), dolTypeTlvTag)) {
+            if (Arrays.equals(EmvTags.PDOL.getBytes(), dolTypeTlvTag)) {
                 result = isValidPdol(dol);
-            } else if (Arrays.equals(EMVTags.CDOL1.getBytes(), dolTypeTlvTag)) {
+            } else if (Arrays.equals(EmvTags.CDOL1.getBytes(), dolTypeTlvTag)) {
                 result = isValidCdol_1(dol);
-            } else if (Arrays.equals(EMVTags.CDOL2.getBytes(), dolTypeTlvTag)) {
+            } else if (Arrays.equals(EmvTags.CDOL2.getBytes(), dolTypeTlvTag)) {
                 result = isValidCdol_2(dol);
             }
         }

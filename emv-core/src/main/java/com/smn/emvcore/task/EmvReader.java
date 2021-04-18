@@ -1,6 +1,6 @@
 package com.smn.emvcore.task;
 
-import com.smn.emvcore.enums.EMVTags;
+import com.smn.emvcore.enums.EmvTags;
 import com.smn.emvcore.enums.EmvCardType;
 import com.smn.emvcore.interfaces.ResultsListener;
 import com.smn.emvcore.interfaces.Transceiver;
@@ -156,18 +156,18 @@ public class EmvReader implements Runnable {
                 int index = 0;
                 int resultSize = 0;
 
-                byte[] aidTlvTagLength = new byte[EMVTags.AID.getBytes().length];
+                byte[] aidTlvTagLength = new byte[EmvTags.AID.getBytes().length];
 
                 while (byteArrayInputStream.read() != -1) {
 
                     index += 1;
 
-                    if (index >= EMVTags.AID.getBytes().length) {
+                    if (index >= EmvTags.AID.getBytes().length) {
                         aidTlvTagLength = Arrays.copyOfRange(respPaymentSystemEnvironment,
-                                index - EMVTags.AID.getBytes().length, index);
+                                index - EmvTags.AID.getBytes().length, index);
                     }
 
-                    if (Arrays.equals(EMVTags.AID.getBytes(), aidTlvTagLength)) {
+                    if (Arrays.equals(EmvTags.AID.getBytes(), aidTlvTagLength)) {
 
                         resultSize = byteArrayInputStream.read();
                     }
@@ -238,17 +238,17 @@ public class EmvReader implements Runnable {
 
                 int i = 0, resultSize;
 
-                byte[] aidTlvTagLength = new byte[EMVTags.AID.getBytes().length];
+                byte[] aidTlvTagLength = new byte[EmvTags.AID.getBytes().length];
 
                 while (byteArrayInputStream.read() != -1) {
 
                     i += 1;
 
-                    if (i >= EMVTags.AID.getBytes().length) {
-                        aidTlvTagLength = Arrays.copyOfRange(respProximityPaymentSystemEnvironment, i - EMVTags.AID.getBytes().length, i);
+                    if (i >= EmvTags.AID.getBytes().length) {
+                        aidTlvTagLength = Arrays.copyOfRange(respProximityPaymentSystemEnvironment, i - EmvTags.AID.getBytes().length, i);
                     }
 
-                    if (Arrays.equals(EMVTags.AID.getBytes(), aidTlvTagLength)) {
+                    if (Arrays.equals(EmvTags.AID.getBytes(), aidTlvTagLength)) {
                         resultSize = byteArrayInputStream.read();
 
                         if (resultSize > byteArrayInputStream.available()) {
@@ -389,7 +389,7 @@ public class EmvReader implements Runnable {
         // Application Label (May be ASCII convertible)
         if (applicationLabel == null) {
 
-            applicationLabel = new TlvUtil().getTlvValue(respFileControlInfor, EMVTags.APPLICATION_LABEL.getBytes());
+            applicationLabel = new TlvUtil().getTlvValue(respFileControlInfor, EmvTags.APPLICATION_LABEL.getBytes());
 
             if (applicationLabel != null) {
                 this.emvLogger.info("EMV (TLV) Application Label  [50] = " + HexUtil.bytesToHexadecimal(applicationLabel));
@@ -398,10 +398,10 @@ public class EmvReader implements Runnable {
 
         // PDOL (Processing Options Data Object List)
         byte[] processingDataObjectList = null;
-        byte[] tempProcessingDataObjectList = new TlvUtil().getTlvValue(respFileControlInfor, EMVTags.PDOL.getBytes());
+        byte[] tempProcessingDataObjectList = new TlvUtil().getTlvValue(respFileControlInfor, EmvTags.PDOL.getBytes());
 
         if (tempProcessingDataObjectList != null &&
-                DolUtil.isValidDol(tempProcessingDataObjectList, EMVTags.PDOL.getBytes())) {
+                DolUtil.isValidDol(tempProcessingDataObjectList, EmvTags.PDOL.getBytes())) {
 
             processingDataObjectList = tempProcessingDataObjectList;
             emvLogger.info("EMV (TLV) - Data:  [9F38] Hexadecimal: " + HexUtil.bytesToHexadecimal(processingDataObjectList));
@@ -446,7 +446,7 @@ public class EmvReader implements Runnable {
             // Application PAN (Primary Account Number)
             if (applicationPan == null) {
 
-                applicationPan = new TlvUtil().getTlvValue(respGetProcessingOptions, EMVTags.APPLICATION_PAN.getBytes());
+                applicationPan = new TlvUtil().getTlvValue(respGetProcessingOptions, EmvTags.APPLICATION_PAN.getBytes());
 
                 if (applicationPan != null) {
                     this.emvLogger.info("EMV (TLV) - Data: Application Account Number  [5A]: " +
@@ -458,7 +458,7 @@ public class EmvReader implements Runnable {
             // Application PAN (Primary Account Number)
             // Cardholder name
             if (cardholderName == null) {
-                cardholderName = new TlvUtil().getTlvValue(respGetProcessingOptions, EMVTags.CARDHOLDER_NAME.getBytes());
+                cardholderName = new TlvUtil().getTlvValue(respGetProcessingOptions, EmvTags.CARDHOLDER_NAME.getBytes());
                 if (cardholderName != null) {
                     this.emvLogger.info("EMV (TLV) - Data: Card holder name [5F20] : " + Arrays.toString(cardholderName));
 
@@ -472,7 +472,7 @@ public class EmvReader implements Runnable {
             // Application Expiration Date
             if (applicationExpirationDate == null) {
 
-                applicationExpirationDate = new TlvUtil().getTlvValue(processingDataObjectList, EMVTags.APPLICATION_EXPIRATION_DATE.getBytes());
+                applicationExpirationDate = new TlvUtil().getTlvValue(processingDataObjectList, EmvTags.APPLICATION_EXPIRATION_DATE.getBytes());
 
                 if (applicationExpirationDate != null) {
                     this.emvLogger.info("EMV (TLV) - Data: Application Expiration Date [5F24]: " + Arrays.toString(applicationExpirationDate));
@@ -491,21 +491,21 @@ public class EmvReader implements Runnable {
         byte[] appFileLocatorData = null;
 
         // Response message template 1 (without tags and lengths)
-        if (respGetProcessingOptions[0] == EMVTags.GPO_RMT1.getBytes()[0]) {
+        if (respGetProcessingOptions[0] == EmvTags.GPO_RMT1.getBytes()[0]) {
             this.emvLogger.info("GPO (Get Processing Options) Response message template 1");
             byte[] gpoData80 = null;
         }
         // - Response message 1 (without tags and lengths)
 
         // Response message template 2 (with tags and lengths)
-        if (respGetProcessingOptions[0] == EMVTags.GPO_RMT2.getBytes()[0]) {
+        if (respGetProcessingOptions[0] == EmvTags.GPO_RMT2.getBytes()[0]) {
             this.emvLogger.info("GPO (Get Processing Options) Response message template 2");
-            byte[] gpoData77 = new TlvUtil().getTlvValue(respGetProcessingOptions, EMVTags.GPO_RMT2.getBytes());
+            byte[] gpoData77 = new TlvUtil().getTlvValue(respGetProcessingOptions, EmvTags.GPO_RMT2.getBytes());
             if (gpoData77 != null) {
                 // AFL (Application File Locator)
                 byte[] afl; // TLV (Type-length-value) tag specified for AFL (Application File Locator) and result variable
 
-                afl = new TlvUtil().getTlvValue(respGetProcessingOptions, EMVTags.AFL.getBytes());
+                afl = new TlvUtil().getTlvValue(respGetProcessingOptions, EmvTags.AFL.getBytes());
 
                 if (afl != null) {
                     appFileLocatorData = afl;
