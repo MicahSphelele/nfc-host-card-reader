@@ -62,19 +62,15 @@ public class NFCReader implements Cloneable, Transceiver {
     }
 
 
-    public boolean isConnected() {
-        return this.impl.isConnected();
-    }
-
-    public void waitForCardRemoval(CardRemovedListener cardRemovedListener) {
-        this.impl.waitForCardRemoval(cardRemovedListener);
-    }
+//    public boolean isConnected() {
+//        return this.impl.isConnected();
+//    }
+//
+//    public void waitForCardRemoval(CardRemovedListener cardRemovedListener) {
+//        this.impl.waitForCardRemoval(cardRemovedListener);
+//    }
 
     private static class ReaderImplementation implements NfcAdapter.ReaderCallback, Closeable {
-        static final int READER_FLAGS = NfcAdapter.FLAG_READER_NFC_A
-                | NfcAdapter.FLAG_READER_NFC_B
-                | NfcAdapter.FLAG_READER_SKIP_NDEF_CHECK
-                | NfcAdapter.FLAG_READER_NO_PLATFORM_SOUNDS;
 
         @NonNull
         private final NFCHelper nfcHelper;
@@ -95,6 +91,7 @@ public class NFCReader implements Cloneable, Transceiver {
         }
 
         public void connect(CardConnectedListener listener) {
+
             if (!nfcHelper.isNFCReaderAvailable()) {
                 listener.onNfcState(NfcState.NFC_NOT_SUPPORTED);
                 return;
