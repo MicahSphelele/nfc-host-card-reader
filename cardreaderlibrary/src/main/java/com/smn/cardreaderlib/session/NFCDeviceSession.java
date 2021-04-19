@@ -88,7 +88,8 @@ public class NFCDeviceSession implements NFCDevice {
                         public void onSuccess(@NotNull EmvResults emvResults) {
 
                             listener.onEmvResults(new com.smn.cardreaderlib.models.EmvResults(
-                                    emvResults.getAid()
+                                    emvResults.getAid(),
+                                    emvResults.getCardNumber()
                             ));
                         }
 
