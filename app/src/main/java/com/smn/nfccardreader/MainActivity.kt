@@ -1,13 +1,14 @@
 package com.smn.nfccardreader
 
 import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.TextView
 import androidx.annotation.RequiresApi
-import com.smn.cardreaderlib.interfaces.CardResultsListener
+import androidx.appcompat.app.AppCompatActivity
 import com.smn.cardreaderlib.NFCReaderSDK
-import com.smn.cardreaderlib.models.EMVCard
+import com.smn.cardreaderlib.enums.NfcState
+import com.smn.cardreaderlib.interfaces.EmvResultsListener
+import com.smn.cardreaderlib.models.EmvResults
 
 class MainActivity : AppCompatActivity() {
 
@@ -16,20 +17,18 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-
-
         NFCReaderSDK.getInstance().nfcDevice.startCardReader( this,object :
-            CardResultsListener {
+            EmvResultsListener {
 
-            override fun onEMVCardData(aid: String) {
+            override fun onEmvResults(emvResults: EmvResults) {
                 runOnUiThread {
-                    findViewById<TextView>(R.id.text).text = aid
+                    findViewById<TextView>(R.id.text).text = emvResults.aid
                 }
             }
 
-            override fun onNfcNotEnabled() {
+            override fun onNfcState(nfcState: NfcState) {
                 runOnUiThread {
-                    findViewById<TextView>(R.id.text).text = String.format("%s","NFC Not Enabled")
+                    findViewById<TextView>(R.id.text).text = String.format("%s",nfcState.name)
                 }
             }
 

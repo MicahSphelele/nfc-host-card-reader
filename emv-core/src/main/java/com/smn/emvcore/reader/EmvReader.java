@@ -565,7 +565,8 @@ public class EmvReader implements Runnable {
         }
 
         if (aid != null) {
-            listener.onSuccess(HexUtil.bytesToHexadecimal(aid));
+            emvResults.setAid(HexUtil.bytesToHexadecimal(aid));
+            listener.onSuccess(emvResults);
             return;
         }
         listener.onError("Unable to get AID");

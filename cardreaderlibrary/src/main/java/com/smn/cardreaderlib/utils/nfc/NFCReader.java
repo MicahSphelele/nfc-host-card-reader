@@ -17,6 +17,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ProcessLifecycleOwner;
 
 import com.smn.cardreaderlib.NFCReaderSDK;
+import com.smn.cardreaderlib.enums.NfcState;
 import com.smn.cardreaderlib.factory.IsoDepFactory;
 import com.smn.emvcore.interfaces.Transceiver;
 
@@ -94,11 +95,15 @@ public class NFCReader implements Cloneable, Transceiver {
         }
 
         public void connect(CardConnectedListener listener) {
-            if (!nfcHelper.isNFCReaderEnabled()) {
-
-                listener.nfcNotEnabled();
-
+            if (!nfcHelper.isNFCReaderAvailable()) {
+                listener.onNfcState(NfcState.NFC_NOT_SUPPORTED);
+                return;
             }
+
+            if (!nfcHelper.isNFCReaderEnabled()) {
+                listener.onNfcState(NfcState.NFC_NOT_ENABLED);
+            }
+
             new Handler(Looper.getMainLooper()).post(() -> this.isoDepMutableLiveData.observe(ProcessLifecycleOwner.get(), isoDep -> {
                 this.isoDep = isoDep;
                 try {
@@ -180,6 +185,6 @@ public class NFCReader implements Cloneable, Transceiver {
 
         void onError(Throwable throwable);
 
-        void nfcNotEnabled();
+        void onNfcState(NfcState nfcState);
     }
 }
