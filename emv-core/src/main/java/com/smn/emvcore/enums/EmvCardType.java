@@ -55,8 +55,4 @@ public enum EmvCardType {
         return aidPrefix;
     }
 
-    public EmvCardType getType(boolean isEqual) {
-
-        return this;
-    }
 }
