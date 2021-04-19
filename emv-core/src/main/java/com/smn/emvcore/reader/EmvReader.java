@@ -6,6 +6,7 @@ import com.smn.emvcore.interfaces.ResultsListener;
 import com.smn.emvcore.interfaces.Transceiver;
 import com.smn.emvcore.logger.EmvLogger;
 import com.smn.emvcore.model.AflObject;
+import com.smn.emvcore.model.EmvResults;
 import com.smn.emvcore.utils.AflUtil;
 import com.smn.emvcore.utils.AidUtil;
 import com.smn.emvcore.utils.DolUtil;
@@ -24,11 +25,13 @@ public class EmvReader implements Runnable {
     private final Transceiver transceiver;
     private final EmvLogger emvLogger;
     private final ResultsListener listener;
+    private final EmvResults emvResults;
 
     public EmvReader(Transceiver transceiver, EmvLogger emvLogger, ResultsListener listener) {
         this.transceiver = transceiver;
         this.emvLogger = emvLogger;
         this.listener = listener;
+        this.emvResults = new EmvResults();
     }
 
     @Override
