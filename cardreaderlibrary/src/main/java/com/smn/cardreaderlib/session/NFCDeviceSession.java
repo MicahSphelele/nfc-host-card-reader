@@ -2,6 +2,8 @@ package com.smn.cardreaderlib.session;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.IntentFilter;
+import android.nfc.NfcAdapter;
 import android.os.Build;
 import android.os.Vibrator;
 
@@ -16,6 +18,7 @@ import com.smn.cardreaderlib.enums.NfcState;
 import com.smn.cardreaderlib.factory.IsoDepFactory;
 import com.smn.cardreaderlib.interfaces.EmvResultsListener;
 import com.smn.cardreaderlib.interfaces.NFCDevice;
+import com.smn.cardreaderlib.receiver.NfcReceiver;
 import com.smn.cardreaderlib.utils.nfc.NFCReader;
 import com.smn.emvcore.interfaces.ResultsListener;
 import com.smn.emvcore.logger.EmvLogger;
@@ -43,17 +46,17 @@ public class NFCDeviceSession implements NFCDevice {
 
     @Override
     public void startCardReader(Activity activity, EmvResultsListener listener) {
-
-        NfcDevice nfcDevice = new NfcDevice(activity,listener);
-        nfcDevice.startCardReader();
+        NfcDeviceLifecycle nfcDeviceLifecycle = new NfcDeviceLifecycle(activity, listener);
+        nfcDeviceLifecycle.startCardReader();
     }
 
-    private class NfcDevice implements DefaultLifecycleObserver {
+    private class NfcDeviceLifecycle implements DefaultLifecycleObserver, NfcReceiver.NfcListener {
 
         private final Activity activity;
         private final EmvResultsListener listener;
+        private NfcReceiver nfcReceiver;
 
-        public NfcDevice(Activity activity, EmvResultsListener listener) {
+        public NfcDeviceLifecycle(Activity activity, EmvResultsListener listener) {
             this.activity = activity;
             this.listener = listener;
             ProcessLifecycleOwner.get().getLifecycle().addObserver(this);
@@ -61,12 +64,17 @@ public class NFCDeviceSession implements NFCDevice {
 
         @Override
         public void onResume(@NonNull LifecycleOwner owner) {
-            NFCDeviceSession.this.logger.info("onResume State");
+            NFCDeviceSession.this.logger.info("onResume Lifecycle state");
+            IntentFilter intentFilter = new IntentFilter(NfcAdapter.ACTION_ADAPTER_STATE_CHANGED);
+            this.nfcReceiver = new NfcReceiver(this);
+            activity.registerReceiver(this.nfcReceiver,intentFilter);
+
         }
 
         @Override
         public void onPause(@NonNull LifecycleOwner owner) {
-            NFCDeviceSession.this.logger.info("onPause State");
+            NFCDeviceSession.this.logger.info("onPause Lifecycle state");
+            activity.unregisterReceiver(this.nfcReceiver);
         }
 
         public void startCardReader() {
@@ -106,6 +114,17 @@ public class NFCDeviceSession implements NFCDevice {
                 }
 
             });
+        }
+
+        @Override
+        public void onNfcStateChanged(Boolean isTurnedOn) {
+            NFCDeviceSession.this.logger.info("onNfcStateChanged = " + isTurnedOn);
+            if (isTurnedOn) {
+                NFCDeviceSession.this.nfcReader.enableReader(this.activity);
+                listener.onNfcState(NfcState.NFC_ENABLED);
+                return;
+            }
+            listener.onNfcState(NfcState.NFC_NOT_ENABLED);
         }
     }
 }
