@@ -1,7 +1,7 @@
 package com.smn.emvcore.reader;
 
-import com.smn.emvcore.enums.EmvTags;
 import com.smn.emvcore.enums.EmvCardType;
+import com.smn.emvcore.enums.EmvTags;
 import com.smn.emvcore.interfaces.ResultsListener;
 import com.smn.emvcore.interfaces.Transceiver;
 import com.smn.emvcore.logger.EmvLogger;
@@ -17,6 +17,7 @@ import com.smn.emvcore.utils.PseUtil;
 import com.smn.emvcore.utils.TlvUtil;
 
 import java.io.ByteArrayInputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -534,15 +535,19 @@ public class EmvReader implements Runnable {
         byte[] cardRiskDataObjectList_2 = null;
 
         List<AflObject> appFileLocatorObjectList = new AflUtil().getAflDataRecords(appFileLocatorData);
+        List<byte[]> commAppFileList = new ArrayList<>();
+        List<byte[]> respAppFileList = new ArrayList<>();
 
         // AFL (Application File Locator) Record(s)
-        if (!appFileLocatorObjectList.isEmpty() && appFileLocatorObjectList.size() > 0) {
+        if (appFileLocatorObjectList != null && !appFileLocatorObjectList.isEmpty()) {
 
             for (AflObject aflObject : appFileLocatorObjectList) {
                 byte[] commReadRecord = aflObject.getReadCommand();
                 byte[] respReadRecord = null;
 
                 if (commReadRecord != null) {
+
+                    commAppFileList.add(commReadRecord);
 
                     this.emvLogger.info("EMV (C-APDU) - Command: \"Read Record\"; Data: \"Read Record\" Hexadecimal: " +
                             HexUtil.bytesToHexadecimal(commReadRecord));
@@ -555,14 +560,86 @@ public class EmvReader implements Runnable {
                 }
 
                 if (respReadRecord != null) {
-
+                    respAppFileList.add(respReadRecord);
                     boolean succeedLe = false;
-
                     this.emvLogger.info("EMV (R-APDU) - Command: \"Read Record\"; Data: \"Read Record\" Hexadecimal: " +
                             HexUtil.bytesToHexadecimal(respReadRecord));
+
+                    if (EmvUtil.isOk(respReadRecord)) {
+                        succeedLe = true;
+                    } else if (EmvUtil.getSwBytes(respReadRecord)[0] == (byte) 0x6C) {
+                        this.emvLogger.error("Try again and getSwBytes");
+                        // Custom Le
+                        commReadRecord[commReadRecord.length - 1] = (byte) (respReadRecord.length - 1);
+
+                        commAppFileList.add(commReadRecord);
+
+                        this.emvLogger.info("EMV (C-APDU) - Command: \"Read Record\"; Data: \"Read Record\" Hexadecimal: "
+                                + HexUtil.bytesToHexadecimal(commReadRecord));
+
+                        try {
+                            respReadRecord = this.transceiver.transceive(commReadRecord);
+                        } catch (Exception e) {
+                            this.emvLogger.error(e);
+                        }
+
+                        if (respReadRecord != null) {
+                            respAppFileList.add(respReadRecord);
+
+
+                            this.emvLogger.info("EMV (R-APDU) - Command: \"Read Record\"; Data: \"Read Record\" Hexadecimal: " +
+                                    HexUtil.bytesToHexadecimal(respReadRecord));
+
+                            if (EmvUtil.isOk(respReadRecord)) {
+                                succeedLe = true;
+                            }
+                        }
+                    }
+
+                    if (succeedLe) {
+                        this.emvLogger.info("EMV (R-APDU) - Command: Read Record; Data: Read Record: Succeeded");
+
+                        // CDOL1 (Card Risk Management Data Object List 1)
+                        if (cardRiskDataObjectList_1 == null) {
+
+                            byte[] tempCdol1 = new TlvUtil().getTlvValue(respReadRecord,
+                                    EmvTags.CDOL1.getBytes());
+
+                            if (tempCdol1 != null && DolUtil.isValidDol(tempCdol1, EmvTags.CDOL1.getBytes())) {
+                                cardRiskDataObjectList_1 = tempCdol1;
+                            }
+                        }// - CDOL1 (Card Risk Management Data Object List 1)
+
+                        // CDOL2 (Card Risk Management Data Object List 2)
+                        if (cardRiskDataObjectList_2 == null) {
+                            byte[] tempCdol2 = new TlvUtil().getTlvValue(respReadRecord, EmvTags.CDOL2.getBytes());
+
+                            if (tempCdol2 != null && DolUtil.isValidDol(tempCdol2, EmvTags.CDOL2.getBytes())) {
+                                cardRiskDataObjectList_2 = tempCdol2;
+                            }
+                        }// - CDOL2 (Card Risk Management Data Object List 2)
+
+                        // Application PAN (Primary Account Number)
+                        if (applicationPan == null) {
+
+                            applicationPan = new TlvUtil().getTlvValue(respReadRecord, EmvTags.APPLICATION_PAN.getBytes());
+
+                            if (applicationPan != null) {
+                                emvResults.setCardNumber(HexUtil.bytesToHexadecimal(applicationPan));
+                                this.emvLogger.info("EMV (TLV) - Data:  Application PAN (Primary Account Number) [5A]: "
+                                        + HexUtil.bytesToHexadecimal(applicationPan));
+
+                            }
+                        }// - Application PAN (Primary Account Number)
+                    }
+
                 }
             }
+
+            emvResults.setCommAppFileList(commAppFileList);
+            emvResults.setRespAppFileList(respAppFileList);
         }
+
 
         if (aid != null) {
             emvResults.setAid(HexUtil.bytesToHexadecimal(aid));
