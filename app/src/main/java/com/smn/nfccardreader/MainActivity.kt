@@ -22,7 +22,8 @@ class MainActivity : AppCompatActivity() {
 
             override fun onEmvResults(emvResults: EmvResults) {
                 runOnUiThread {
-                    findViewById<TextView>(R.id.text).text = emvResults.aid
+                    findViewById<TextView>(R.id.text).text = String.format("AID = %s \nCardNumber = %s",
+                        emvResults.aid,emvResults.cardNumber)
                 }
             }
 
