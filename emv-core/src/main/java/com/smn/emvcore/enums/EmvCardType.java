@@ -11,7 +11,7 @@ public enum EmvCardType {
     PIX: 1010
     AID (Application Identifier): A0000000041010
     */
-    Mastercard("Mastercard (PayPass)",false, new byte[]{ (byte) 0xA0, (byte) 0x00, (byte) 0x00,
+    Mastercard("Mastercard (PayPass)", new byte[]{ (byte) 0xA0, (byte) 0x00, (byte) 0x00,
             (byte) 0x00, (byte) 0x04, (byte) 0x10,
             (byte) 0x10}),
     /*
@@ -20,7 +20,7 @@ public enum EmvCardType {
     PIX: 3060
     AID (Application Identifier): A0000000043060
     */
-    Maestro("Maestro (PayPass)",false, new byte[]{ (byte) 0xA0, (byte) 0x00, (byte) 0x00,
+    Maestro("Maestro (PayPass)", new byte[]{ (byte) 0xA0, (byte) 0x00, (byte) 0x00,
             (byte) 0x00, (byte) 0x04, (byte) 0x30,
             (byte) 0x60}),
     /*
@@ -29,7 +29,7 @@ public enum EmvCardType {
     PIX: 1010
     AID (Application Identifier): A0000000031010
     */
-    Visa("Visa (PayWave)",true, new byte[]{ (byte) 0xA0, (byte) 0x00, (byte) 0x00, (byte) 0x00,
+    Visa("Visa (PayWave)", new byte[]{ (byte) 0xA0, (byte) 0x00, (byte) 0x00, (byte) 0x00,
             (byte) 0x03, (byte) 0x10,
             (byte) 0x10}),
     /*
@@ -38,18 +38,18 @@ public enum EmvCardType {
     PIX: 2010
     AID (Application Identifier): A0000000032010
     */
-    VisaElectron("Visa Electron (PayWave)",true, new byte[]{(byte) 0xA0, (byte) 0x00, (byte) 0x00,
+    VisaElectron("Visa Electron (PayWave)", new byte[]{(byte) 0xA0, (byte) 0x00, (byte) 0x00,
             (byte) 0x00, (byte) 0x03, (byte) 0x20,
-            (byte) 0x10});
+            (byte) 0x10}),
+
+    UnsupportedCardType("Unsupported CardType", new byte[]{0x0});
 
     private final String description;
     private final byte[] aidBytes;
-    private final boolean isPayWave;
 
-    EmvCardType(String description,boolean isPayWave, byte[] aidBytes) {
+    EmvCardType(String description, byte[] aidBytes) {
         this.description = description;
-        this.aidBytes = aidBytes;
-        this.isPayWave = isPayWave;
+        this.aidBytes = aidBytes;;
     }
 
     public String getDescription() {
@@ -60,7 +60,4 @@ public enum EmvCardType {
         return this.aidBytes;
     }
 
-    public boolean isPayWave() {
-        return this.isPayWave;
-    }
 }
