@@ -187,20 +187,20 @@ public class EmvReader implements Runnable {
 
                         if (byteArrayInputStream.read(resultRes, 0, resultSize) != 0) {
 
-                            if (Arrays.equals(resultRes, EmvCardType.Mastercard.getAidPrefix())) {
+                            if (Arrays.equals(resultRes, EmvCardType.Mastercard.getAidBytes())) {
                                 isPayPass = true;
                                 aid = resultRes;
                                 this.emvLogger.info("AID Mastercard = " + HexUtil.bytesToHexadecimal(aid));
 
-                            } else if (Arrays.equals(resultRes, EmvCardType.Maestro.getAidPrefix())) {
+                            } else if (Arrays.equals(resultRes, EmvCardType.Maestro.getAidBytes())) {
                                 isPayPass = true;
                                 aid = resultRes;
                                 this.emvLogger.info("AID Maestro = " + HexUtil.bytesToHexadecimal(aid));
-                            } else if (Arrays.equals(resultRes, EmvCardType.Visa.getAidPrefix())) {
+                            } else if (Arrays.equals(resultRes, EmvCardType.Visa.getAidBytes())) {
                                 isPayWave = true;
                                 aid = resultRes;
                                 this.emvLogger.info("AID Visa = " + HexUtil.bytesToHexadecimal(aid));
-                            } else if (Arrays.equals(resultRes, EmvCardType.VisaElectron.getAidPrefix())) {
+                            } else if (Arrays.equals(resultRes, EmvCardType.VisaElectron.getAidBytes())) {
                                 isPayWave = true;
                                 aid = resultRes;
                                 this.emvLogger.info("AID Visa Electron = " + HexUtil.bytesToHexadecimal(aid));
@@ -265,20 +265,20 @@ public class EmvReader implements Runnable {
 
                             if (byteArrayInputStream.read(resultRes, 0, resultSize) != 0) {
 
-                                if (Arrays.equals(resultRes, EmvCardType.Mastercard.getAidPrefix())) {
+                                if (Arrays.equals(resultRes, EmvCardType.Mastercard.getAidBytes())) {
                                     isPayPass = true;
                                     aid = resultRes;
                                     this.emvLogger.info("AID Mastercard = " + HexUtil.bytesToHexadecimal(aid));
 
-                                } else if (Arrays.equals(resultRes, EmvCardType.Maestro.getAidPrefix())) {
+                                } else if (Arrays.equals(resultRes, EmvCardType.Maestro.getAidBytes())) {
                                     isPayPass = true;
                                     aid = resultRes;
                                     this.emvLogger.info("AID Maestro = " + HexUtil.bytesToHexadecimal(aid));
-                                } else if (Arrays.equals(resultRes, EmvCardType.Visa.getAidPrefix())) {
+                                } else if (Arrays.equals(resultRes, EmvCardType.Visa.getAidBytes())) {
                                     isPayWave = true;
                                     aid = resultRes;
                                     this.emvLogger.info("AID Visa = " + HexUtil.bytesToHexadecimal(aid));
-                                } else if (Arrays.equals(resultRes, EmvCardType.VisaElectron.getAidPrefix())) {
+                                } else if (Arrays.equals(resultRes, EmvCardType.VisaElectron.getAidBytes())) {
                                     isPayWave = true;
                                     aid = resultRes;
                                     this.emvLogger.info("AID Visa Electron = " + HexUtil.bytesToHexadecimal(aid));
@@ -310,55 +310,55 @@ public class EmvReader implements Runnable {
         byte[] commFileControlInfor;
         byte[] respFileControlInfor = null;
 
-        if (Arrays.equals(aid, EmvCardType.Mastercard.getAidPrefix())) {
+        if (Arrays.equals(aid, EmvCardType.Mastercard.getAidBytes())) {
 
-            commFileControlInfor = AidUtil.selectAid(EmvCardType.Mastercard.getAidPrefix());
+            commFileControlInfor = AidUtil.selectAid(EmvCardType.Mastercard.getAidBytes());
 
             if (commFileControlInfor != null) {
 
                 try {
 
-                    respFileControlInfor = this.transceiver.transceive(AidUtil.selectAid(EmvCardType.Mastercard.getAidPrefix()));
+                    respFileControlInfor = this.transceiver.transceive(AidUtil.selectAid(EmvCardType.Mastercard.getAidBytes()));
 
                 } catch (Exception e) {
                     this.emvLogger.error(e);
                 }
             }
 
-        } else if (Arrays.equals(aid, EmvCardType.Maestro.getAidPrefix())) {
-            commFileControlInfor = AidUtil.selectAid(EmvCardType.Maestro.getAidPrefix());
+        } else if (Arrays.equals(aid, EmvCardType.Maestro.getAidBytes())) {
+            commFileControlInfor = AidUtil.selectAid(EmvCardType.Maestro.getAidBytes());
 
             if (commFileControlInfor != null) {
 
                 try {
 
-                    respFileControlInfor = this.transceiver.transceive(AidUtil.selectAid(EmvCardType.Maestro.getAidPrefix()));
+                    respFileControlInfor = this.transceiver.transceive(AidUtil.selectAid(EmvCardType.Maestro.getAidBytes()));
 
                 } catch (Exception e) {
                     this.emvLogger.error(e);
                 }
             }
-        } else if (Arrays.equals(aid, EmvCardType.Visa.getAidPrefix())) {
-            commFileControlInfor = AidUtil.selectAid(EmvCardType.Visa.getAidPrefix());
+        } else if (Arrays.equals(aid, EmvCardType.Visa.getAidBytes())) {
+            commFileControlInfor = AidUtil.selectAid(EmvCardType.Visa.getAidBytes());
 
             if (commFileControlInfor != null) {
 
                 try {
 
-                    respFileControlInfor = this.transceiver.transceive(AidUtil.selectAid(EmvCardType.Visa.getAidPrefix()));
+                    respFileControlInfor = this.transceiver.transceive(AidUtil.selectAid(EmvCardType.Visa.getAidBytes()));
 
                 } catch (Exception e) {
                     this.emvLogger.error(e);
                 }
             }
-        } else if (Arrays.equals(aid, EmvCardType.VisaElectron.getAidPrefix())) {
-            commFileControlInfor = AidUtil.selectAid(EmvCardType.VisaElectron.getAidPrefix());
+        } else if (Arrays.equals(aid, EmvCardType.VisaElectron.getAidBytes())) {
+            commFileControlInfor = AidUtil.selectAid(EmvCardType.VisaElectron.getAidBytes());
 
             if (commFileControlInfor != null) {
 
                 try {
 
-                    respFileControlInfor = this.transceiver.transceive(AidUtil.selectAid(EmvCardType.VisaElectron.getAidPrefix()));
+                    respFileControlInfor = this.transceiver.transceive(AidUtil.selectAid(EmvCardType.VisaElectron.getAidBytes()));
 
                 } catch (Exception e) {
                     this.emvLogger.error(e);

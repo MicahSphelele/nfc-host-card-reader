@@ -2,6 +2,9 @@ package com.smn.emvcore.enums;
 
 public enum EmvCardType {
 
+    //AIDs that need support
+    //A00000000310100020
+
     /*
     Mastercard (PayPass)
     RID: A000000004
@@ -40,19 +43,19 @@ public enum EmvCardType {
             (byte) 0x10});
 
     private final String description;
-    private final byte[] aidPrefix;
+    private final byte[] aidBytes;
 
-    EmvCardType(String description, byte[] aidPrefix) {
+    EmvCardType(String description, byte[] aidBytes) {
         this.description = description;
-        this.aidPrefix = aidPrefix;
+        this.aidBytes = aidBytes;
     }
 
     public String getDescription() {
         return this.description;
     }
 
-    public byte[] getAidPrefix() {
-        return aidPrefix;
+    public byte[] getAidBytes() {
+        return aidBytes;
     }
 
 }
