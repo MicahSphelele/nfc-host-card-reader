@@ -2,10 +2,12 @@ package com.smn.emvcore.reader;
 
 import com.smn.emvcore.enums.EmvCardType;
 import com.smn.emvcore.enums.EmvTags;
+import com.smn.emvcore.handler.MiscHandler;
 import com.smn.emvcore.interfaces.ResultsListener;
 import com.smn.emvcore.interfaces.Transceiver;
 import com.smn.emvcore.logger.EmvLogger;
 import com.smn.emvcore.model.AflObject;
+import com.smn.emvcore.model.EmvCardTypeObject;
 import com.smn.emvcore.model.EmvResults;
 import com.smn.emvcore.utils.AflUtil;
 import com.smn.emvcore.utils.AidUtil;
@@ -21,18 +23,21 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+@SuppressWarnings("ConstantConditions")
 public class EmvReader implements Runnable {
 
     private final Transceiver transceiver;
     private final EmvLogger emvLogger;
     private final ResultsListener listener;
     private final EmvResults emvResults;
+    private final MiscHandler miscHandler;
 
     public EmvReader(Transceiver transceiver, EmvLogger emvLogger, ResultsListener listener) {
         this.transceiver = transceiver;
         this.emvLogger = emvLogger;
         this.listener = listener;
         this.emvResults = new EmvResults();
+        this.miscHandler = new MiscHandler(this.emvLogger);
     }
 
     @Override
@@ -184,29 +189,21 @@ public class EmvReader implements Runnable {
                     if (resultSize != -1) {
 
                         byte[] resultRes = new byte[resultSize];
+                        EmvCardTypeObject emvCardTypeObject;
 
                         if (byteArrayInputStream.read(resultRes, 0, resultSize) != 0) {
+                            this.emvLogger.info("Get card type in first try");
+                            emvCardTypeObject = miscHandler.getCardType(resultRes);
+                            aid = emvCardTypeObject.getAid();
+                            isPayPass = emvCardTypeObject.isPayPass();
+                            isPayWave = emvCardTypeObject.isPayWave();
 
-                            if (Arrays.equals(resultRes, EmvCardType.Mastercard.getAidBytes())) {
-                                isPayPass = true;
-                                aid = resultRes;
-                                this.emvLogger.info("AID Mastercard = " + HexUtil.bytesToHexadecimal(aid));
-
-                            } else if (Arrays.equals(resultRes, EmvCardType.Maestro.getAidBytes())) {
-                                isPayPass = true;
-                                aid = resultRes;
-                                this.emvLogger.info("AID Maestro = " + HexUtil.bytesToHexadecimal(aid));
-                            } else if (Arrays.equals(resultRes, EmvCardType.Visa.getAidBytes())) {
-                                isPayWave = true;
-                                aid = resultRes;
-                                this.emvLogger.info("AID Visa = " + HexUtil.bytesToHexadecimal(aid));
-                            } else if (Arrays.equals(resultRes, EmvCardType.VisaElectron.getAidBytes())) {
-                                isPayWave = true;
-                                aid = resultRes;
-                                this.emvLogger.info("AID Visa Electron = " + HexUtil.bytesToHexadecimal(aid));
-                            } else {
-                                this.emvLogger.error("Cannot identify AID = " + HexUtil.bytesToHexadecimal(resultRes));
+                            if (!isPayPass && !isPayWave) {
+                                this.emvLogger.info("Get card type in first try. AID not supported");
+                                aidNotSupported = true;
                             }
+
+                            this.emvLogger.info(emvCardTypeObject.toString());
                         }
                     }
                 }
@@ -262,31 +259,21 @@ public class EmvReader implements Runnable {
                         if (resultSize != -1) {
 
                             byte[] resultRes = new byte[resultSize];
+                            EmvCardTypeObject emvCardTypeObject;
 
                             if (byteArrayInputStream.read(resultRes, 0, resultSize) != 0) {
+                                this.emvLogger.info("Get card type in second try");
+                                emvCardTypeObject = miscHandler.getCardType(resultRes);
+                                aid = emvCardTypeObject.getAid();
+                                isPayPass = emvCardTypeObject.isPayPass();
+                                isPayWave = emvCardTypeObject.isPayWave();
 
-                                if (Arrays.equals(resultRes, EmvCardType.Mastercard.getAidBytes())) {
-                                    isPayPass = true;
-                                    aid = resultRes;
-                                    this.emvLogger.info("AID Mastercard = " + HexUtil.bytesToHexadecimal(aid));
-
-                                } else if (Arrays.equals(resultRes, EmvCardType.Maestro.getAidBytes())) {
-                                    isPayPass = true;
-                                    aid = resultRes;
-                                    this.emvLogger.info("AID Maestro = " + HexUtil.bytesToHexadecimal(aid));
-                                } else if (Arrays.equals(resultRes, EmvCardType.Visa.getAidBytes())) {
-                                    isPayWave = true;
-                                    aid = resultRes;
-                                    this.emvLogger.info("AID Visa = " + HexUtil.bytesToHexadecimal(aid));
-                                } else if (Arrays.equals(resultRes, EmvCardType.VisaElectron.getAidBytes())) {
-                                    isPayWave = true;
-                                    aid = resultRes;
-                                    this.emvLogger.info("AID Visa Electron = " + HexUtil.bytesToHexadecimal(aid));
-                                } else {
-                                    aid = resultRes;
+                                if (!isPayPass && !isPayWave) {
+                                    this.emvLogger.error("Get card type in second try. AID not supported");
                                     aidNotSupported = true;
-                                    this.emvLogger.error("Cannot identify AID = " + HexUtil.bytesToHexadecimal(resultRes));
                                 }
+
+                                this.emvLogger.info(emvCardTypeObject.toString());
                             }
                         }
                     }
@@ -302,7 +289,7 @@ public class EmvReader implements Runnable {
         }
 
         if (aidNotSupported) {
-            listener.onError("Card AID type not supported");
+            listener.onError("AID type not supported");
             return;
         }
 
@@ -372,8 +359,8 @@ public class EmvReader implements Runnable {
 
             } catch (Exception e) {
                 this.emvLogger.error(e);
+                this.emvLogger.error("Unknown file control");
             }
-            this.emvLogger.error("Unknown file control");
         }
 
         if (commFileControlInfor != null) {
