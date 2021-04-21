@@ -29,18 +29,10 @@ import org.jetbrains.annotations.NotNull;
 
 @RequiresApi(api = Build.VERSION_CODES.O)
 public class NFCDeviceSession implements NFCDevice {
-
-    public NFCReader nfcReader;
     public EmvLogger logger;
 
     public NFCDeviceSession() {
 
-        Vibrator vibrator = (Vibrator) NFCReaderSDK
-                .getInstance()
-                .getContext()
-                .getSystemService(Context.VIBRATOR_SERVICE);
-
-        this.nfcReader = new NFCReader(vibrator, new IsoDepFactory());
         this.logger = NFCReaderSDK.getInstance().getLogger();
     }
 
@@ -56,11 +48,18 @@ public class NFCDeviceSession implements NFCDevice {
         private final Activity activity;
         private final EmvResultsListener listener;
         private NfcReceiver nfcReceiver;
+        public NFCReader nfcReader;
 
         public NfcDeviceLifecycle(Activity activity, EmvResultsListener listener) {
+            ProcessLifecycleOwner.get().getLifecycle().addObserver(this);
             this.activity = activity;
             this.listener = listener;
-            ProcessLifecycleOwner.get().getLifecycle().addObserver(this);
+            Vibrator vibrator = (Vibrator) NFCReaderSDK
+                    .getInstance()
+                    .getContext()
+                    .getSystemService(Context.VIBRATOR_SERVICE);
+
+            this.nfcReader = new NFCReader(vibrator, new IsoDepFactory());
         }
 
         @Override
@@ -68,7 +67,7 @@ public class NFCDeviceSession implements NFCDevice {
             NFCDeviceSession.this.logger.info("onResume Lifecycle state");
             IntentFilter intentFilter = new IntentFilter(NfcAdapter.ACTION_ADAPTER_STATE_CHANGED);
             this.nfcReceiver = new NfcReceiver(this);
-            activity.registerReceiver(this.nfcReceiver,intentFilter);
+            activity.registerReceiver(this.nfcReceiver, intentFilter);
 
         }
 
@@ -79,8 +78,8 @@ public class NFCDeviceSession implements NFCDevice {
         }
 
         public void startCardReader() {
-            NFCDeviceSession.this.nfcReader.enableReader(this.activity);
-            NFCDeviceSession.this.nfcReader.connect(new NFCReader.CardConnectedListener() {
+            this.nfcReader.enableReader(this.activity);
+            this.nfcReader.connect(new NFCReader.CardConnectedListener() {
                 @Override
                 public void onCardConnected() {
                     activity.runOnUiThread(() -> new Thread(new EmvReader(nfcReader, logger, new ResultsListener() {
@@ -122,7 +121,7 @@ public class NFCDeviceSession implements NFCDevice {
         public void onNfcStateChanged(Boolean isTurnedOn) {
             NFCDeviceSession.this.logger.info("onNfcStateChanged = " + isTurnedOn);
             if (isTurnedOn) {
-                NFCDeviceSession.this.nfcReader.enableReader(this.activity);
+                this.nfcReader.enableReader(this.activity);
                 listener.onNfcState(NfcState.NFC_ENABLED);
                 return;
             }
