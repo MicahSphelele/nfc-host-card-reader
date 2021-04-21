@@ -54,9 +54,7 @@ public class NFCDeviceSession implements NFCDevice {
             ProcessLifecycleOwner.get().getLifecycle().addObserver(this);
             this.activity = activity;
             this.listener = listener;
-            Vibrator vibrator = (Vibrator) NFCReaderSDK
-                    .getInstance()
-                    .getContext()
+            Vibrator vibrator = (Vibrator) activity
                     .getSystemService(Context.VIBRATOR_SERVICE);
 
             this.nfcReader = new NFCReader(vibrator, new IsoDepFactory());
