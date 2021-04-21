@@ -5,7 +5,6 @@ import android.app.Activity;
 import com.smn.cardreaderlib.enums.NfcState;
 import com.smn.cardreaderlib.interfaces.EmvResultsListener;
 import com.smn.cardreaderlib.models.EmvResults;
-import com.smn.cardreaderlib.utils.nfc.NFCHelper;
 
 import org.junit.Assert;
 import org.junit.Before;
