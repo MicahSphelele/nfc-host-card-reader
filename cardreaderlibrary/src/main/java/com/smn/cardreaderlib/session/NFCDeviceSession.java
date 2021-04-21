@@ -46,6 +46,7 @@ public class NFCDeviceSession implements NFCDevice {
 
     @Override
     public void startCardReader(Activity activity, EmvResultsListener listener) {
+        this.logger.info("Start card reader");
         NfcDeviceLifecycle nfcDeviceLifecycle = new NfcDeviceLifecycle(activity, listener);
         nfcDeviceLifecycle.startCardReader();
     }
