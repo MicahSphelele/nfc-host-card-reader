@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">NFCCardReader</string>
+    <string name="txt_nfc_error_message">Device OS version is below android Oreo</string>
 </resources>
