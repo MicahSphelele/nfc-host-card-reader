@@ -82,10 +82,37 @@ public class NFCDeviceSessionTest {
         Assert.assertNull(emvResults[0]);
     }
 
-    @SuppressWarnings("ConstantConditions")
     @Test
     public void testEmvResultsNotNull() throws InterruptedException {
+        CountDownLatch lock = new CountDownLatch(1);
 
+        final EmvResults [] emvResults = {null};
+
+        this.mockNfcDeviceSession
+                .startCardReader
+                        (this.mockActivity,
+                                new EmvResultsListener() {
+                                    @SuppressWarnings("NullableProblems")
+                                    @Override
+                                    public void onEmvResults(EmvResults emvResult) {
+                                        emvResults[0] = emvResult;
+                                        lock.countDown();
+                                    }
+
+                                    @SuppressWarnings("NullableProblems")
+                                    @Override
+                                    public void onNfcState(NfcState nfcState) {
+                                        lock.countDown();
+                                    }
+
+                                    @SuppressWarnings("NullableProblems")
+                                    @Override
+                                    public void onError(String message) {
+                                        lock.countDown();
+                                    }
+                                });
+        lock.await(2000, TimeUnit.MILLISECONDS);
+        Assert.assertNotNull(emvResults[0]);
     }
 
     @SuppressWarnings("ConstantConditions")
