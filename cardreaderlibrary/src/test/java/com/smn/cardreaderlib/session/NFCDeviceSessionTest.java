@@ -68,7 +68,6 @@ public class NFCDeviceSessionTest {
                                     @SuppressWarnings("NullableProblems")
                                     @Override
                                     public void onNfcState(NfcState nfcState) {
-
                                         lock.countDown();
                                     }
 
@@ -80,6 +79,12 @@ public class NFCDeviceSessionTest {
                                 });
         lock.await(2000, TimeUnit.MILLISECONDS);
         Assert.assertNull(emvResults[0]);
+    }
+
+    @SuppressWarnings("ConstantConditions")
+    @Test
+    public void testEmvResultsNotNull() throws InterruptedException {
+
     }
 
     @SuppressWarnings("ConstantConditions")
