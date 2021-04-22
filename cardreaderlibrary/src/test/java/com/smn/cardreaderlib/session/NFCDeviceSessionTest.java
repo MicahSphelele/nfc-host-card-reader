@@ -28,7 +28,6 @@ public class NFCDeviceSessionTest {
     @Mock
     Activity mockActivity;
 
-
     @Before
     public void setUp() throws NoSuchFieldException, IllegalAccessException {
 
@@ -43,6 +42,44 @@ public class NFCDeviceSessionTest {
                 .startCardReader(any(), any());
     }
 
+    @SuppressWarnings("ConstantConditions")
+    @Test
+    public void testStartCardReaderNfcStateIsNull() throws InterruptedException {
+        doAnswer(x -> {
+            EmvResultsListener listener = x.getArgument(1,EmvResultsListener.class);
+            listener.onNfcState(null);
+            return null;
+        }).when(this.mockNfcDeviceSession)
+                .startCardReader(any(), any());
+        CountDownLatch lock = new CountDownLatch(1);
+        final NfcState [] nfcStates = {null};
+
+        this.mockNfcDeviceSession
+                .startCardReader
+                        (this.mockActivity,
+                                new EmvResultsListener() {
+                                    @SuppressWarnings("NullableProblems")
+                                    @Override
+                                    public void onEmvResults(EmvResults emvResults) {
+                                        lock.countDown();
+                                    }
+
+                                    @SuppressWarnings("NullableProblems")
+                                    @Override
+                                    public void onNfcState(NfcState nfcState) {
+                                        nfcStates[0] = nfcState;
+                                        lock.countDown();
+                                    }
+
+                                    @SuppressWarnings("NullableProblems")
+                                    @Override
+                                    public void onError(String message) {
+                                        lock.countDown();
+                                    }
+                                });
+        lock.await(2000, TimeUnit.MILLISECONDS);
+        Assert.assertNull(nfcStates[0]);
+    }
 
     @Test
     public void testStartCardReaderNfcStateNotNull() throws InterruptedException {
