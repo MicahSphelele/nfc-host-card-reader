@@ -42,6 +42,11 @@ public class NFCDeviceSessionTest {
                 .startCardReader(any(), any());
     }
 
+    @Test
+    public void testEmvResultsIsNull() throws InterruptedException {
+
+    }
+
     @SuppressWarnings("ConstantConditions")
     @Test
     public void testStartCardReaderNfcStateIsNull() throws InterruptedException {
