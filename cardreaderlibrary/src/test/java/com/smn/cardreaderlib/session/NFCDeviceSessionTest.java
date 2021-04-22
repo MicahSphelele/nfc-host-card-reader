@@ -115,6 +115,11 @@ public class NFCDeviceSessionTest {
         Assert.assertNotNull(emvResults[0]);
     }
 
+    @Test
+    public void testEmvResultsAIDIsA0000000043060() throws InterruptedException {
+
+    }
+
     @SuppressWarnings("ConstantConditions")
     @Test
     public void testStartCardReaderNfcStateIsNull() throws InterruptedException {
