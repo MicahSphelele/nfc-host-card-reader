@@ -117,7 +117,35 @@ public class NFCDeviceSessionTest {
 
     @Test
     public void testEmvResultsAIDIsA0000000043060() throws InterruptedException {
+        CountDownLatch lock = new CountDownLatch(1);
 
+        final EmvResults [] emvResults = {null};
+
+        this.mockNfcDeviceSession
+                .startCardReader
+                        (this.mockActivity,
+                                new EmvResultsListener() {
+                                    @SuppressWarnings("NullableProblems")
+                                    @Override
+                                    public void onEmvResults(EmvResults emvResult) {
+                                        emvResults[0] = emvResult;
+                                        lock.countDown();
+                                    }
+
+                                    @SuppressWarnings("NullableProblems")
+                                    @Override
+                                    public void onNfcState(NfcState nfcState) {
+                                        lock.countDown();
+                                    }
+
+                                    @SuppressWarnings("NullableProblems")
+                                    @Override
+                                    public void onError(String message) {
+                                        lock.countDown();
+                                    }
+                                });
+        lock.await(2000, TimeUnit.MILLISECONDS);
+        Assert.assertEquals("A0000000043060",emvResults[0].getAid());
     }
 
     @SuppressWarnings("ConstantConditions")
