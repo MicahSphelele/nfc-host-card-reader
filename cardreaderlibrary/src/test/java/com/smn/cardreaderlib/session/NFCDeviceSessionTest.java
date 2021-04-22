@@ -29,7 +29,7 @@ public class NFCDeviceSessionTest {
     Activity mockActivity;
 
     @Before
-    public void setUp() throws NoSuchFieldException, IllegalAccessException {
+    public void setUp() {
 
         EmvResults emvResults = new EmvResults("A0000000043060","6799998900000060158F");
 
