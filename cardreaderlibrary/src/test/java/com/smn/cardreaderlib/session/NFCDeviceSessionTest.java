@@ -61,7 +61,8 @@ public class NFCDeviceSessionTest {
                                 new EmvResultsListener() {
                                     @SuppressWarnings("NullableProblems")
                                     @Override
-                                    public void onEmvResults(EmvResults emvResults) {
+                                    public void onEmvResults(EmvResults emvResult) {
+                                        emvResults[0] = emvResult;
                                         lock.countDown();
                                     }
 
