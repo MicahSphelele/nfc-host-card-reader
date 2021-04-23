@@ -2,7 +2,7 @@ package com.smn.emvcore.model;
 
 import java.util.List;
 
-public class EmvResults {
+public class EmvResponse {
 
     private String aid;
     private String cardNumber;
@@ -21,7 +21,7 @@ public class EmvResults {
     }
 
     public String getCardNumber() {
-        return cardNumber;
+        return this.cardNumber;
     }
 
     public void setCardNumber(String cardNumber) {

@@ -8,7 +8,7 @@ import com.smn.emvcore.interfaces.Transceiver;
 import com.smn.emvcore.logger.EmvLogger;
 import com.smn.emvcore.model.AflObject;
 import com.smn.emvcore.model.EmvCardTypeObject;
-import com.smn.emvcore.model.EmvResults;
+import com.smn.emvcore.model.EmvResponse;
 import com.smn.emvcore.utils.AflUtil;
 import com.smn.emvcore.utils.AidUtil;
 import com.smn.emvcore.utils.DolUtil;
@@ -29,14 +29,14 @@ public class EmvReader implements Runnable {
     private final Transceiver transceiver;
     private final EmvLogger emvLogger;
     private final ResultsListener listener;
-    private final EmvResults emvResults;
+    private final EmvResponse emvResponse;
     private final MiscHandler miscHandler;
 
     public EmvReader(Transceiver transceiver, EmvLogger emvLogger, ResultsListener listener) {
         this.transceiver = transceiver;
         this.emvLogger = emvLogger;
         this.listener = listener;
-        this.emvResults = new EmvResults();
+        this.emvResponse = new EmvResponse();
         this.miscHandler = new MiscHandler(this.emvLogger);
     }
 
@@ -452,13 +452,13 @@ public class EmvReader implements Runnable {
                 cardholderName = new TlvUtil().getTlvValue(respGetProcessingOptions, EmvTags.CARDHOLDER_NAME.getBytes());
                 if (cardholderName != null) {
                     this.emvLogger.info("EMV (TLV) - Data: Card holder name [5F20] : " + Arrays.toString(cardholderName));
-                    this.emvResults.setCardHolderName(HexUtil.bytesToHexadecimal(cardholderName));
+                    this.emvResponse.setCardHolderName(HexUtil.bytesToHexadecimal(cardholderName));
                     String cardholderNameHexadecimal = HexUtil.bytesToHexadecimal(cardholderName);
                     if (cardholderNameHexadecimal != null) {
                         this.emvLogger.info("EMV (TLV) - Data: Card holder name [5F20] Hexadecimal : " + cardholderNameHexadecimal);
                     }
                 } else {
-                    this.emvResults.setCardHolderName("/");
+                    this.emvResponse.setCardHolderName("/");
                 }
             }
 
@@ -614,7 +614,7 @@ public class EmvReader implements Runnable {
                             applicationPan = new TlvUtil().getTlvValue(respReadRecord, EmvTags.APPLICATION_PAN.getBytes());
 
                             if (applicationPan != null) {
-                                this.emvResults.setCardNumber(HexUtil.bytesToHexadecimal(applicationPan));
+                                this.emvResponse.setCardNumber(HexUtil.bytesToHexadecimal(applicationPan));
                                 this.emvLogger.info("EMV (TLV) - Data:  Application PAN (Primary Account Number) [5A]: "
                                         + HexUtil.bytesToHexadecimal(applicationPan));
 
@@ -626,21 +626,21 @@ public class EmvReader implements Runnable {
                             cardholderName = new TlvUtil().getTlvValue(respReadRecord, EmvTags.CARDHOLDER_NAME.getBytes());
 
                             if (cardholderName != null) {
-                                this.emvResults.setCardHolderName(HexUtil.bytesToHexadecimal(cardholderName));
+                                this.emvResponse.setCardHolderName(HexUtil.bytesToHexadecimal(cardholderName));
                                 this.emvLogger.info("EMV (TLV) - Data: Cardholder Name [5F20] Hexadecimal: " + HexUtil.bytesToHexadecimal(cardholderName));
                             } else {
-                                this.emvResults.setCardHolderName("/");
+                                this.emvResponse.setCardHolderName("/");
                                 this.emvLogger.info("EMV (TLV) - Data: Cardholder Name [5F20] NULL");
                             }
                         }// - Cardholder Name (May be ASCII convertible)
 
                         // Application Expiration Date
                         if (applicationExpirationDate == null) {
-                            
+
                             applicationExpirationDate = new TlvUtil().getTlvValue(respReadRecord, EmvTags.APPLICATION_EXPIRATION_DATE.getBytes());
 
                             if (applicationExpirationDate != null) {
-                                this.emvResults.setCardExpirationDate(HexUtil.bytesToHexadecimal(applicationExpirationDate));
+                                this.emvResponse.setCardExpirationDate(HexUtil.bytesToHexadecimal(applicationExpirationDate));
                                 this.emvLogger.info("EMV (TLV) - Data: Application Expiration Date [5F24] Hexadecimal: " + HexUtil.bytesToHexadecimal(applicationExpirationDate));
                             } else {
                                 this.emvLogger.info("EMV (TLV) - Data: Application Expiration Date [5F24] : NULL");
@@ -650,14 +650,14 @@ public class EmvReader implements Runnable {
                 }
             }
 
-            emvResults.setCommAppFileList(commAppFileList);
-            emvResults.setRespAppFileList(respAppFileList);
+            emvResponse.setCommAppFileList(commAppFileList);
+            emvResponse.setRespAppFileList(respAppFileList);
         }
 
 
         if (aid != null) {
-            emvResults.setAid(HexUtil.bytesToHexadecimal(aid));
-            listener.onSuccess(emvResults);
+            emvResponse.setAid(HexUtil.bytesToHexadecimal(aid));
+            listener.onSuccess(emvResponse);
             return;
         }
         listener.onError("Unable to get AID");

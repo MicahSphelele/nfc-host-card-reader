@@ -23,7 +23,7 @@ import com.smn.cardreaderlib.receiver.NfcReceiver;
 import com.smn.cardreaderlib.utils.nfc.NFCReader;
 import com.smn.emvcore.interfaces.ResultsListener;
 import com.smn.emvcore.logger.EmvLogger;
-import com.smn.emvcore.model.EmvResults;
+import com.smn.emvcore.model.EmvResponse;
 import com.smn.emvcore.reader.EmvReader;
 
 import org.jetbrains.annotations.NotNull;
@@ -84,12 +84,12 @@ public class NFCDeviceSession implements NFCDevice {
                     activity.runOnUiThread(() -> new Thread(new EmvReader(nfcReader, logger, new ResultsListener() {
 
                         @Override
-                        public void onSuccess(@NotNull EmvResults emvResults) {
+                        public void onSuccess(@NotNull EmvResponse emvResponse) {
 
                             listener.onEmvResults(new EmvResult(
-                                    emvResults.getAid(),
-                                    emvResults.getCardNumber(),
-                                    emvResults.getCardHolderName()
+                                    emvResponse.getAid(),
+                                    emvResponse.getCardNumber(),
+                                    emvResponse.getCardHolderName()
                             ));
                         }
 
