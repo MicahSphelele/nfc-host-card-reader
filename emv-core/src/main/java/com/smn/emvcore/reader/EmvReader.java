@@ -621,6 +621,7 @@ public class EmvReader implements Runnable {
                             }
                         }// - Application PAN (Primary Account Number)
 
+                        // Cardholder Name (May be ASCII convertible)
                         if (cardholderName == null) {
                             cardholderName = new TlvUtil().getTlvValue(respReadRecord, EmvTags.CARDHOLDER_NAME.getBytes());
 
@@ -632,7 +633,7 @@ public class EmvReader implements Runnable {
                                 this.emvLogger.info( "EMV (TLV) - Data: Cardholder Name [5F20]\" NULL");
                             }
                         }
-                    }
+                    } // - Cardholder Name (May be ASCII convertible)
 
                 }
             }
