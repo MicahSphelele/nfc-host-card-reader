@@ -18,6 +18,7 @@ import com.smn.cardreaderlib.enums.NfcState;
 import com.smn.cardreaderlib.factory.IsoDepFactory;
 import com.smn.cardreaderlib.interfaces.EmvResultsListener;
 import com.smn.cardreaderlib.interfaces.NFCDevice;
+import com.smn.cardreaderlib.models.EmvResult;
 import com.smn.cardreaderlib.receiver.NfcReceiver;
 import com.smn.cardreaderlib.utils.nfc.NFCReader;
 import com.smn.emvcore.interfaces.ResultsListener;
@@ -85,7 +86,7 @@ public class NFCDeviceSession implements NFCDevice {
                         @Override
                         public void onSuccess(@NotNull EmvResults emvResults) {
 
-                            listener.onEmvResults(new com.smn.cardreaderlib.models.EmvResults(
+                            listener.onEmvResults(new EmvResult(
                                     emvResults.getAid(),
                                     emvResults.getCardNumber(),
                                     emvResults.getCardHolderName()

@@ -4,7 +4,7 @@ import android.app.Activity;
 
 import com.smn.cardreaderlib.enums.NfcState;
 import com.smn.cardreaderlib.interfaces.EmvResultsListener;
-import com.smn.cardreaderlib.models.EmvResults;
+import com.smn.cardreaderlib.models.EmvResult;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -31,12 +31,12 @@ public class NFCDeviceSessionTest {
     @Before
     public void setUp() {
 
-        EmvResults emvResults = new EmvResults("A0000000043060","6799998900000060158F");
+        EmvResult emvResult = new EmvResult("A0000000043060","6799998900000060158F","/");
 
         doAnswer(x -> {
             EmvResultsListener listener = x.getArgument(1,EmvResultsListener.class);
             listener.onNfcState(NfcState.NFC_ENABLED);
-            listener.onEmvResults(emvResults);
+            listener.onEmvResults(emvResult);
             return null;
         }).when(this.mockNfcDeviceSession)
                 .startCardReader(any(), any());
@@ -52,7 +52,7 @@ public class NFCDeviceSessionTest {
                 .startCardReader(any(), any());
         CountDownLatch lock = new CountDownLatch(1);
 
-        final EmvResults [] emvResults = {null};
+        final EmvResult[] emvResults = {null};
 
         this.mockNfcDeviceSession
                 .startCardReader
@@ -60,7 +60,7 @@ public class NFCDeviceSessionTest {
                                 new EmvResultsListener() {
                                     @SuppressWarnings("NullableProblems")
                                     @Override
-                                    public void onEmvResults(EmvResults emvResult) {
+                                    public void onEmvResults(EmvResult emvResult) {
                                         emvResults[0] = emvResult;
                                         lock.countDown();
                                     }
@@ -85,7 +85,7 @@ public class NFCDeviceSessionTest {
     public void testEmvResultsNotNull() throws InterruptedException {
         CountDownLatch lock = new CountDownLatch(1);
 
-        final EmvResults [] emvResults = {null};
+        final EmvResult[] emvResults = {null};
 
         this.mockNfcDeviceSession
                 .startCardReader
@@ -93,7 +93,7 @@ public class NFCDeviceSessionTest {
                                 new EmvResultsListener() {
                                     @SuppressWarnings("NullableProblems")
                                     @Override
-                                    public void onEmvResults(EmvResults emvResult) {
+                                    public void onEmvResults(EmvResult emvResult) {
                                         emvResults[0] = emvResult;
                                         lock.countDown();
                                     }
@@ -118,7 +118,7 @@ public class NFCDeviceSessionTest {
     public void testEmvResultsAIDIsA0000000043060() throws InterruptedException {
         CountDownLatch lock = new CountDownLatch(1);
 
-        final EmvResults [] emvResults = {null};
+        final EmvResult[] emvResults = {null};
 
         this.mockNfcDeviceSession
                 .startCardReader
@@ -126,7 +126,7 @@ public class NFCDeviceSessionTest {
                                 new EmvResultsListener() {
                                     @SuppressWarnings("NullableProblems")
                                     @Override
-                                    public void onEmvResults(EmvResults emvResult) {
+                                    public void onEmvResults(EmvResult emvResult) {
                                         emvResults[0] = emvResult;
                                         lock.countDown();
                                     }
@@ -151,7 +151,7 @@ public class NFCDeviceSessionTest {
     public void testEmvResultsCardNumberIs6799998900000060158F() throws InterruptedException {
         CountDownLatch lock = new CountDownLatch(1);
 
-        final EmvResults [] emvResults = {null};
+        final EmvResult[] emvResults = {null};
 
         this.mockNfcDeviceSession
                 .startCardReader
@@ -159,7 +159,7 @@ public class NFCDeviceSessionTest {
                                 new EmvResultsListener() {
                                     @SuppressWarnings("NullableProblems")
                                     @Override
-                                    public void onEmvResults(EmvResults emvResult) {
+                                    public void onEmvResults(EmvResult emvResult) {
                                         emvResults[0] = emvResult;
                                         lock.countDown();
                                     }
@@ -197,7 +197,7 @@ public class NFCDeviceSessionTest {
                                 new EmvResultsListener() {
                                     @SuppressWarnings("NullableProblems")
                                     @Override
-                                    public void onEmvResults(EmvResults emvResults) {
+                                    public void onEmvResults(EmvResult emvResult) {
                                         lock.countDown();
                                     }
 
@@ -230,7 +230,7 @@ public class NFCDeviceSessionTest {
                                 new EmvResultsListener() {
             @SuppressWarnings("NullableProblems")
             @Override
-            public void onEmvResults(EmvResults emvResults) {
+            public void onEmvResults(EmvResult emvResult) {
                lock.countDown();
             }
 
@@ -262,7 +262,7 @@ public class NFCDeviceSessionTest {
                                 new EmvResultsListener() {
                                     @SuppressWarnings("NullableProblems")
                                     @Override
-                                    public void onEmvResults(EmvResults emvResults) {
+                                    public void onEmvResults(EmvResult emvResult) {
                                         lock.countDown();
                                     }
 
@@ -301,7 +301,7 @@ public class NFCDeviceSessionTest {
                                 new EmvResultsListener() {
                                     @SuppressWarnings("NullableProblems")
                                     @Override
-                                    public void onEmvResults(EmvResults emvResults) {
+                                    public void onEmvResults(EmvResult emvResult) {
                                         lock.countDown();
                                     }
 
@@ -340,7 +340,7 @@ public class NFCDeviceSessionTest {
                                 new EmvResultsListener() {
                                     @SuppressWarnings("NullableProblems")
                                     @Override
-                                    public void onEmvResults(EmvResults emvResults) {
+                                    public void onEmvResults(EmvResult emvResult) {
                                         lock.countDown();
                                     }
 

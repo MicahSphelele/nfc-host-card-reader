@@ -7,7 +7,7 @@ import androidx.databinding.DataBindingUtil
 import com.smn.cardreaderlib.NFCReaderSDK
 import com.smn.cardreaderlib.enums.NfcState
 import com.smn.cardreaderlib.interfaces.EmvResultsListener
-import com.smn.cardreaderlib.models.EmvResults
+import com.smn.cardreaderlib.models.EmvResult
 import com.smn.nfccardreader.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
@@ -23,13 +23,13 @@ class MainActivity : AppCompatActivity() {
             NFCReaderSDK.getInstance().nfcDevice.startCardReader(this, object :
                 EmvResultsListener {
 
-                override fun onEmvResults(emvResults: EmvResults) {
+                override fun onEmvResults(emvResult: EmvResult) {
                     runOnUiThread {
                         binding.text.text = String.format(
                             "AID = %s \nCardNumber = %s \ncardHolderName = %s",
-                            emvResults.aid,
-                            emvResults.cardNumber,
-                            emvResults.cardHolderName
+                            emvResult.aid,
+                            emvResult.cardNumber,
+                            emvResult.cardHolderName
                         )
                     }
                 }

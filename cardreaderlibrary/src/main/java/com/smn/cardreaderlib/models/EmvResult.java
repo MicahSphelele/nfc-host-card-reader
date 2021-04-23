@@ -2,7 +2,7 @@ package com.smn.cardreaderlib.models;
 
 import java.util.List;
 
-public class EmvResults  {
+public class EmvResult {
 
     private final String aid;
     private final String cardNumber;
@@ -10,7 +10,7 @@ public class EmvResults  {
     private List<byte[]> commAppFileList;
     private List<byte[]> respAppFileList;
 
-    public EmvResults(String aid,String cardNumber, String cardHolderName) {
+    public EmvResult(String aid, String cardNumber, String cardHolderName) {
         this.aid = aid;
         this.cardNumber = cardNumber;
         this.cardHolderName = cardHolderName;
