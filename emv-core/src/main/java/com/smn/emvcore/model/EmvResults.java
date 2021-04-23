@@ -6,6 +6,7 @@ public class EmvResults {
 
     private String aid;
     private String cardNumber;
+    private String cardHolderName;
     private List<byte[]> commAppFileList;
     private List<byte[]> respAppFileList;
 
@@ -24,6 +25,14 @@ public class EmvResults {
 
     public void setCardNumber(String cardNumber) {
         this.cardNumber = cardNumber;
+    }
+
+    public String getCardHolderName() {
+        return this.cardHolderName;
+    }
+
+    public void setCardHolderName(String cardHolderName) {
+        this.cardHolderName = cardHolderName;
     }
 
     public List<byte[]>  getCommAppFileList() {

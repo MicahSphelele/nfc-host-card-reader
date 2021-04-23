@@ -452,11 +452,13 @@ public class EmvReader implements Runnable {
                 cardholderName = new TlvUtil().getTlvValue(respGetProcessingOptions, EmvTags.CARDHOLDER_NAME.getBytes());
                 if (cardholderName != null) {
                     this.emvLogger.info("EMV (TLV) - Data: Card holder name [5F20] : " + Arrays.toString(cardholderName));
-
+                    this.emvResults.setCardHolderName(HexUtil.bytesToHexadecimal(cardholderName));
                     String cardholderNameHexadecimal = HexUtil.bytesToHexadecimal(cardholderName);
                     if (cardholderNameHexadecimal != null) {
                         this.emvLogger.info("EMV (TLV) - Data: Card holder name [5F20] Hexadecimal : " + cardholderNameHexadecimal);
                     }
+                }else {
+                    this.emvResults.setCardHolderName("/");
                 }
             }
 
@@ -618,6 +620,18 @@ public class EmvReader implements Runnable {
 
                             }
                         }// - Application PAN (Primary Account Number)
+
+                        if (cardholderName == null) {
+                            cardholderName = new TlvUtil().getTlvValue(respReadRecord, EmvTags.CARDHOLDER_NAME.getBytes());
+
+                            if (cardholderName != null) {
+                                emvResults.setCardHolderName(HexUtil.bytesToHexadecimal(cardholderName));
+                                this.emvLogger.info( "EMV (TLV) - Data: Cardholder Name [5F20]\" Hexadecimal: " + HexUtil.bytesToHexadecimal(cardholderName));
+                            } else {
+                                emvResults.setCardHolderName("/");
+                                this.emvLogger.info( "EMV (TLV) - Data: Cardholder Name [5F20]\" NULL");
+                            }
+                        }
                     }
 
                 }
