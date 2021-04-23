@@ -6,12 +6,14 @@ public class EmvResults  {
 
     private final String aid;
     private final String cardNumber;
+    private final String cardHolderName;
     private List<byte[]> commAppFileList;
     private List<byte[]> respAppFileList;
 
-    public EmvResults(String aid,String cardNumber) {
+    public EmvResults(String aid,String cardNumber, String cardHolderName) {
         this.aid = aid;
         this.cardNumber = cardNumber;
+        this.cardHolderName = cardHolderName;
     }
 
     public String getAid() {
@@ -20,6 +22,10 @@ public class EmvResults  {
 
     public String getCardNumber() {
         return this.cardNumber;
+    }
+
+    public String getCardHolderName() {
+        return this.cardHolderName;
     }
 
     public List<byte[]> getCommAppFileList() {
