@@ -632,8 +632,8 @@ public class EmvReader implements Runnable {
                                 emvResults.setCardHolderName("/");
                                 this.emvLogger.info( "EMV (TLV) - Data: Cardholder Name [5F20]\" NULL");
                             }
-                        }
-                    } // - Cardholder Name (May be ASCII convertible)
+                        }// - Cardholder Name (May be ASCII convertible)
+                    }
 
                 }
             }
