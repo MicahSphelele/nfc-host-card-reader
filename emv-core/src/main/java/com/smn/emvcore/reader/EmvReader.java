@@ -636,7 +636,7 @@ public class EmvReader implements Runnable {
 
                         // Application Expiration Date
                         if (applicationExpirationDate == null) {
-                            this.emvLogger.info("applicationExpirationDate");
+                            
                             applicationExpirationDate = new TlvUtil().getTlvValue(respReadRecord, EmvTags.APPLICATION_EXPIRATION_DATE.getBytes());
 
                             if (applicationExpirationDate != null) {
