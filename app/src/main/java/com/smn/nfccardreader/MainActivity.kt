@@ -26,10 +26,11 @@ class MainActivity : AppCompatActivity() {
                 override fun onEmvResults(emvResult: EmvResult) {
                     runOnUiThread {
                         binding.text.text = String.format(
-                            "AID = %s \nCardNumber = %s \ncardHolderName = %s",
+                            "AID = %s \nCardNumber = %s \nCardHolderName = %s \nCardExpirationDate = %s",
                             emvResult.aid,
                             emvResult.cardNumber,
-                            emvResult.cardHolderName
+                            emvResult.cardHolderName,
+                            emvResult.cardExpirationDate
                         )
                     }
                 }
