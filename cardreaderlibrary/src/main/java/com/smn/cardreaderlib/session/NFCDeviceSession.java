@@ -48,7 +48,7 @@ public class NFCDeviceSession implements NFCDevice {
         private final Activity activity;
         private final EmvResultsListener listener;
         private NfcReceiver nfcReceiver;
-        public NFCReader nfcReader;
+        private final NFCReader nfcReader;
 
         public NfcDeviceLifecycle(Activity activity, EmvResultsListener listener) {
             ProcessLifecycleOwner.get().getLifecycle().addObserver(this);
