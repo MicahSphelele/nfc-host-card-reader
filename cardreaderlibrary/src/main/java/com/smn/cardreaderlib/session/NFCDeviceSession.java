@@ -89,7 +89,8 @@ public class NFCDeviceSession implements NFCDevice {
                             listener.onEmvResults(new EmvResult(
                                     emvResponse.getAid(),
                                     emvResponse.getCardNumber(),
-                                    emvResponse.getCardHolderName()
+                                    emvResponse.getCardHolderName(),
+                                    emvResponse.getCardExpirationDate()
                             ));
                         }
 

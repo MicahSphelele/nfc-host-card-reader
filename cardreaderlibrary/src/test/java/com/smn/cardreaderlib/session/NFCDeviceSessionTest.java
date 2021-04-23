@@ -31,7 +31,8 @@ public class NFCDeviceSessionTest {
     @Before
     public void setUp() {
 
-        EmvResult emvResult = new EmvResult("A0000000043060","6799998900000060158F","/");
+        EmvResult emvResult = new EmvResult("A0000000043060", "6799998900000060158F",
+                "/","491231");
 
         doAnswer(x -> {
             EmvResultsListener listener = x.getArgument(1,EmvResultsListener.class);

@@ -7,13 +7,15 @@ public class EmvResult {
     private final String aid;
     private final String cardNumber;
     private final String cardHolderName;
+    private final String cardExpirationDate;
     private List<byte[]> commAppFileList;
     private List<byte[]> respAppFileList;
 
-    public EmvResult(String aid, String cardNumber, String cardHolderName) {
+    public EmvResult(String aid, String cardNumber, String cardHolderName, String cardExpirationDate) {
         this.aid = aid;
         this.cardNumber = cardNumber;
         this.cardHolderName = cardHolderName;
+        this.cardExpirationDate = cardExpirationDate;
     }
 
     public String getAid() {
@@ -26,6 +28,10 @@ public class EmvResult {
 
     public String getCardHolderName() {
         return this.cardHolderName;
+    }
+
+    public String getCardExpirationDate() {
+        return this.cardExpirationDate;
     }
 
     public List<byte[]> getCommAppFileList() {
