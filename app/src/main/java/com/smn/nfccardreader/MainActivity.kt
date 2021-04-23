@@ -2,8 +2,6 @@ package com.smn.nfccardreader
 
 import android.os.Build
 import android.os.Bundle
-import android.widget.TextView
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import com.smn.cardreaderlib.NFCReaderSDK
@@ -18,22 +16,27 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val binding: ActivityMainBinding = DataBindingUtil.setContentView(this,R.layout.activity_main)
+        val binding: ActivityMainBinding =
+            DataBindingUtil.setContentView(this, R.layout.activity_main)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NFCReaderSDK.getInstance().nfcDevice.startCardReader( this,object :
+            NFCReaderSDK.getInstance().nfcDevice.startCardReader(this, object :
                 EmvResultsListener {
 
                 override fun onEmvResults(emvResults: EmvResults) {
                     runOnUiThread {
-                        binding.text.text = String.format("AID = %s \nCardNumber = %s",
-                            emvResults.aid,emvResults.cardNumber)
+                        binding.text.text = String.format(
+                            "AID = %s \nCardNumber = %s \ncardHolderName = %s",
+                            emvResults.aid,
+                            emvResults.cardNumber,
+                            emvResults.cardHolderName
+                        )
                     }
                 }
 
                 override fun onNfcState(nfcState: NfcState) {
                     runOnUiThread {
-                        binding.text.text = String.format("%s",nfcState.name)
+                        binding.text.text = String.format("%s", nfcState.name)
                     }
                 }
 
