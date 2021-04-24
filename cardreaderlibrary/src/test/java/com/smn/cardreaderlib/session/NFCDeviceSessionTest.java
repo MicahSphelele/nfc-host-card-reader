@@ -182,6 +182,39 @@ public class NFCDeviceSessionTest {
         Assert.assertEquals("6799998900000060158F",emvResults[0].getCardNumber());
     }
 
+    @Test
+    public void testEmvResultsCardNumberIsHolderIsNotNull() throws InterruptedException {
+        CountDownLatch lock = new CountDownLatch(1);
+
+        final EmvResult[] emvResults = {null};
+
+        this.mockNfcDeviceSession
+                .startCardReader
+                        (this.mockActivity,
+                                new EmvResultsListener() {
+                                    @SuppressWarnings("NullableProblems")
+                                    @Override
+                                    public void onEmvResults(EmvResult emvResult) {
+                                        emvResults[0] = emvResult;
+                                        lock.countDown();
+                                    }
+
+                                    @SuppressWarnings("NullableProblems")
+                                    @Override
+                                    public void onNfcState(NfcState nfcState) {
+                                        lock.countDown();
+                                    }
+
+                                    @SuppressWarnings("NullableProblems")
+                                    @Override
+                                    public void onError(String message) {
+                                        lock.countDown();
+                                    }
+                                });
+        lock.await(2000, TimeUnit.MILLISECONDS);
+        Assert.assertNotNull("Card holder name is not null",emvResults[0].getCardHolderName());
+    }
+
     @SuppressWarnings("ConstantConditions")
     @Test
     public void testStartCardReaderNfcStateIsNull() throws InterruptedException {
