@@ -15,6 +15,9 @@ jobs:
         with:
           java-version: 1.8
 
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
+
       - name: Run Tests
         run: ./gradlew clean lint test
 
