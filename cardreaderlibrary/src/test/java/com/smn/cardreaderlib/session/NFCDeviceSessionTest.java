@@ -183,6 +183,39 @@ public class NFCDeviceSessionTest {
     }
 
     @Test
+    public void testEmvResultsCardExpireDateNotNull() throws InterruptedException {
+        CountDownLatch lock = new CountDownLatch(1);
+
+        final EmvResult[] emvResults = {null};
+
+        this.mockNfcDeviceSession
+                .startCardReader
+                        (this.mockActivity,
+                                new EmvResultsListener() {
+                                    @SuppressWarnings("NullableProblems")
+                                    @Override
+                                    public void onEmvResults(EmvResult emvResult) {
+                                        emvResults[0] = emvResult;
+                                        lock.countDown();
+                                    }
+
+                                    @SuppressWarnings("NullableProblems")
+                                    @Override
+                                    public void onNfcState(NfcState nfcState) {
+                                        lock.countDown();
+                                    }
+
+                                    @SuppressWarnings("NullableProblems")
+                                    @Override
+                                    public void onError(String message) {
+                                        lock.countDown();
+                                    }
+                                });
+        lock.await(2000, TimeUnit.MILLISECONDS);
+        Assert.assertNotNull("Card expire date is not null",emvResults[0].getCardExpirationDate());
+    }
+
+    @Test
     public void testEmvResultsCardNumberIsHolderIsNotNull() throws InterruptedException {
         CountDownLatch lock = new CountDownLatch(1);
 
