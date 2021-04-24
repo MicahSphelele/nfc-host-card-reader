@@ -429,4 +429,44 @@ public class NFCDeviceSessionTest {
         lock.await(2000, TimeUnit.MILLISECONDS);
         Assert.assertEquals(NfcState.NFC_NOT_SUPPORTED,nfcStates[0]);
     }
+
+    @Test
+    public void testOnErrorMessageNotNull() throws InterruptedException {
+
+        doAnswer(x -> {
+            EmvResultsListener listener = x.getArgument(1,EmvResultsListener.class);
+            listener.onError("");
+            return null;
+        }).when(this.mockNfcDeviceSession)
+                .startCardReader(any(), any());
+
+        CountDownLatch lock = new CountDownLatch(1);
+        final String [] error = {null};
+        this.mockNfcDeviceSession
+                .startCardReader
+                        (this.mockActivity,
+                                new EmvResultsListener() {
+                                    @SuppressWarnings("NullableProblems")
+                                    @Override
+                                    public void onEmvResults(EmvResult emvResult) {
+                                        lock.countDown();
+                                    }
+
+                                    @SuppressWarnings("NullableProblems")
+                                    @Override
+                                    public void onNfcState(NfcState nfcState) {
+
+                                        lock.countDown();
+                                    }
+
+                                    @SuppressWarnings("NullableProblems")
+                                    @Override
+                                    public void onError(String message) {
+                                        error[0] = message;
+                                        lock.countDown();
+                                    }
+                                });
+        lock.await(2000, TimeUnit.MILLISECONDS);
+        Assert.assertNotNull("Error message not null",error[0]);
+    }
 }
