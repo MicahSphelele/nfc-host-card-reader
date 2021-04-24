@@ -43,6 +43,7 @@ public class NFCDeviceSessionTest {
                 .startCardReader(any(), any());
     }
 
+    @SuppressWarnings("ConstantConditions")
     @Test
     public void testEmvResultsIsNull() throws InterruptedException {
         doAnswer(x -> {
