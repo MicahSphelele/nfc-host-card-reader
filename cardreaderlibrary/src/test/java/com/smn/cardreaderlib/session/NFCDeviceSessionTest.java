@@ -181,6 +181,7 @@ public class NFCDeviceSessionTest {
         Assert.assertEquals("6799998900000060158F",emvResults[0].getCardNumber());
     }
 
+    @SuppressWarnings("ConstantConditions")
     @Test
     public void testStartCardReaderNfcStateIsNull() throws InterruptedException {
         doAnswer(x -> {
