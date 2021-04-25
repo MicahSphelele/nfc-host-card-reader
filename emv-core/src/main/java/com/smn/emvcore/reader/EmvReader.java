@@ -38,7 +38,6 @@ public class EmvReader implements Runnable {
         this.listener = listener;
         this.emvResponse = new EmvResponse();
         this.miscHandler = new MiscHandler(this.emvLogger);
-
     }
 
     @Override
