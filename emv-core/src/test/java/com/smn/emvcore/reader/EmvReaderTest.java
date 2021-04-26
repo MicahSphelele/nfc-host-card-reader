@@ -100,9 +100,26 @@ public class EmvReaderTest {
         Assert.assertNotNull("EMV response not null",emvResponses[0]);
     }
 
-    @Test(expected = AssertionError.class)
+    @Test(expected = NullPointerException.class)
     public void testEmvResponseIsAidIsNull() {
+        final CountDownLatch lock = new CountDownLatch(1);
+        final EmvResponse [] emvResponses = {null};
 
+        mockEmvReader = new EmvReader(mockTransceiver, mockEmvLogger, new ResultsListener() {
+            @SuppressWarnings("NullableProblems")
+            @Override
+            public void onSuccess(EmvResponse emvResponse) {
+                emvResponses[0] = emvResponse;
+                lock.countDown();
+            }
+
+            @Override
+            public void onError(String message) {
+                lock.countDown();
+            }
+        });
+        new Thread(mockEmvReader).start();
+        Assert.assertNull("EMV response aid is null",emvResponses[0].getAid());
     }
 
 }
