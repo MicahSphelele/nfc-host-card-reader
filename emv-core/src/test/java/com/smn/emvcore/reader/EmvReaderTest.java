@@ -99,4 +99,10 @@ public class EmvReaderTest {
         new Thread(mockEmvReader).start();
         Assert.assertNotNull("EMV response not null",emvResponses[0]);
     }
+
+    @Test(expected = AssertionError.class)
+    public void testEmvResponseIsAidIsNull() {
+
+    }
+
 }
