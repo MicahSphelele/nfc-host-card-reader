@@ -55,7 +55,6 @@ public class EmvReaderTest {
             @Override
             public void onError(String message) {
                 messages[0] = message;
-                System.err.println(message);
                 lock.countDown();
             }
         });
