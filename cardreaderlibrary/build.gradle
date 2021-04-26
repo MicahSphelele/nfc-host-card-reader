@@ -1,5 +1,30 @@
 plugins {
     id 'com.android.library'
+    id 'maven-publish'
+}
+
+group "com.smn"
+version "${project.'sdk.version'}-${project.'sdk.versionCode'}-dev"
+
+afterEvaluate {
+    publishing {
+        publications {
+            // Creates a Maven publication called "release".
+            release(MavenPublication) {
+                // Applies the component for the release build variant.
+                from components.release
+            }
+        }
+        repositories {
+            maven {
+                url = uri("https://maven.pkg.github.com/MicahSphelele/nfc-host-card-reader")
+                credentials {
+                    username = System.getenv("GITHUB_ACTOR")
+                    password = System.getenv("GITHUB_TOKEN")
+                }
+            }
+        }
+    }
 }
 
 android {
@@ -9,8 +34,8 @@ android {
     defaultConfig {
         minSdkVersion 19
         targetSdkVersion 30
-        versionCode 1
-        versionName "1.0.0"
+        versionCode Integer.parseInt(project.'sdk.versionCode')
+        versionName project.'sdk.version'
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"

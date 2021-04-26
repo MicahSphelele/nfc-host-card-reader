@@ -1,5 +1,26 @@
 plugins {
     id 'java-library'
+    id 'maven-publish'
+}
+
+group "com.smn"
+version "${project.'sdk.version'}-${project.'sdk.versionCode'}-dev"
+
+publishing {
+    publications {
+        gpr(MavenPublication) {
+            from(components.java)
+        }
+    }
+    repositories {
+        maven {
+            url = uri("https://maven.pkg.github.com/MicahSphelele/nfc-host-card-reader")
+            credentials {
+                username = System.getenv("GITHUB_ACTOR")
+                password = System.getenv("GITHUB_TOKEN")
+            }
+        }
+    }
 }
 
 java {
