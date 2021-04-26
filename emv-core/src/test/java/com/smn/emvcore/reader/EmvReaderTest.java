@@ -61,4 +61,9 @@ public class EmvReaderTest {
         new Thread(mockEmvReader).start();
         Assert.assertNotNull(messages[0]);
     }
+
+    @Test(expected = AssertionError.class)
+    public void testErrorMessageCannotReadCard() {
+
+    }
 }
