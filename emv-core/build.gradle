@@ -9,6 +9,6 @@ java {
 
 dependencies {
     compileOnly 'org.jetbrains:annotations:16.0.2'
-    testImplementation 'org.mockito:mockito-core:3.4.4'
+    testImplementation 'org.mockito:mockito-core:3.8.0'
     testImplementation 'junit:junit:4.13.2'
 }
