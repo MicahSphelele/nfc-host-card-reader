@@ -10,15 +10,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.mockito.stubbing.Answer;
 
-import java.util.Arrays;
 import java.util.concurrent.CountDownLatch;
-import java.util.logging.Handler;
-
-import static org.mockito.Mockito.doAnswer;
 
 @RunWith(MockitoJUnitRunner.class)
 public class EmvReaderTest {
@@ -64,6 +58,23 @@ public class EmvReaderTest {
 
     @Test(expected = AssertionError.class)
     public void testErrorMessageCannotReadCard() {
+        final String [] messages = {null};
+        final CountDownLatch lock = new CountDownLatch(1);
 
+        mockEmvReader = new EmvReader(mockTransceiver, mockEmvLogger, new ResultsListener() {
+            @SuppressWarnings("NullableProblems")
+            @Override
+            public void onSuccess(EmvResponse emvResponse) {
+                lock.countDown();
+            }
+
+            @Override
+            public void onError(String message) {
+                messages[0] = message;
+                lock.countDown();
+            }
+        });
+        new Thread(mockEmvReader).start();
+        Assert.assertEquals("Cannot read card",messages[0]);
     }
 }
