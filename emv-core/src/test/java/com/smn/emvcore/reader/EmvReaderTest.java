@@ -31,7 +31,6 @@ public class EmvReaderTest {
     public void setUp() {
 
         mockTransceiver = new MockTransceiver();
-
     }
 
     @Test(expected = AssertionError.class)
