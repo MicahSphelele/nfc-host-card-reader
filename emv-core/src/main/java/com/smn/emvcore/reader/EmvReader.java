@@ -22,8 +22,9 @@ import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
 
-@SuppressWarnings("ConstantConditions")
+@SuppressWarnings({"ConstantConditions", "UnusedAssignment", "unused", "RedundantSuppression"})
 public class EmvReader implements Runnable {
 
     private final Transceiver transceiver;
@@ -39,6 +40,7 @@ public class EmvReader implements Runnable {
         this.emvResponse = new EmvResponse();
         this.miscHandler = new MiscHandler(this.emvLogger);
     }
+
 
     @Override
     public void run() {
@@ -136,10 +138,8 @@ public class EmvReader implements Runnable {
         // TLV Extractable Data
         byte[] aid = null; // AID (Application Identifier)
         byte[] applicationLabel = null; // Application Label
-        String applicationLabelAscii = null; // Application Label ASCII
         byte[] applicationPan = null; // Application PAN (Primary Account Number)
         byte[] cardholderName = null; // Cardholder Name
-        String cardholderNameAscii = null; // Cardholder Name ASCII
         byte[] applicationExpirationDate = null; // Application Expiration Date
         // - TLV Extractable Data
 
@@ -661,5 +661,14 @@ public class EmvReader implements Runnable {
             return;
         }
         listener.onError("Unable to get AID");
+    }
+
+    public void startEmvReader(ExecutorService executorService) {
+        executorService.submit(new Runnable() {
+            @Override
+            public void run() {
+
+            }
+        });
     }
 }
