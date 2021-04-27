@@ -663,12 +663,9 @@ public class EmvReader implements Runnable {
         listener.onError("Unable to get AID");
     }
 
-    public void startEmvReader(ExecutorService executorService) {
-        executorService.submit(new Runnable() {
-            @Override
-            public void run() {
+    public void startEmvReader(ExecutorService executorService, ResultsListener listener) {
+        executorService.submit(() -> {
 
-            }
         });
     }
 }
