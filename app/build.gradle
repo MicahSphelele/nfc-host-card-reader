@@ -12,8 +12,8 @@ android {
         applicationId "com.smn.nfccardreader"
         minSdkVersion 19
         targetSdkVersion 30
-        versionCode 1
-        versionName "1.0.0"
+        versionCode Integer.parseInt(project.'sdk.versionCode')
+        versionName project.'sdk.version'
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }

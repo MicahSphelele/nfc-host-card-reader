@@ -30,6 +30,7 @@ import org.jetbrains.annotations.NotNull;
 
 @RequiresApi(api = Build.VERSION_CODES.O)
 public class NFCDeviceSession implements NFCDevice {
+
     public EmvLogger logger;
 
     public NFCDeviceSession() {
@@ -77,15 +78,15 @@ public class NFCDeviceSession implements NFCDevice {
         }
 
         public void startCardReader() {
+
             this.nfcReader.enableReader(this.activity);
             this.nfcReader.connect(new NFCReader.CardConnectedListener() {
                 @Override
                 public void onCardConnected() {
-                    activity.runOnUiThread(() -> new Thread(new EmvReader(nfcReader, logger, new ResultsListener() {
-
+                    EmvReader emvReader = new EmvReader(nfcReader, logger);
+                    emvReader.startEmvReader(NFCReaderSDK.getExecutor(), new ResultsListener() {
                         @Override
                         public void onSuccess(@NotNull EmvResponse emvResponse) {
-
                             listener.onEmvResults(new EmvResult(
                                     emvResponse.getAid(),
                                     emvResponse.getCardNumber(),
@@ -98,7 +99,7 @@ public class NFCDeviceSession implements NFCDevice {
                         public void onError(String message) {
                             listener.onError(message);
                         }
-                    })).start());
+                    });
                 }
 
                 @Override
