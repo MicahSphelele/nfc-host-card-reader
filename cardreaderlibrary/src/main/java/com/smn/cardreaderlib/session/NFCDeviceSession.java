@@ -83,7 +83,7 @@ public class NFCDeviceSession implements NFCDevice {
             this.nfcReader.connect(new NFCReader.CardConnectedListener() {
                 @Override
                 public void onCardConnected() {
-                    EmvReader emvReader = new EmvReader(nfcReader,logger);
+                    EmvReader emvReader = new EmvReader(nfcReader, logger);
                     emvReader.startEmvReader(NFCReaderSDK.getExecutor(), new ResultsListener() {
                         @Override
                         public void onSuccess(@NotNull EmvResponse emvResponse) {
