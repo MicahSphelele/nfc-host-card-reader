@@ -19,7 +19,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.doAnswer;
 
 @RunWith(MockitoJUnitRunner.class)
 public class EmvReaderTest {
@@ -53,13 +53,12 @@ public class EmvReaderTest {
         emvResponse.setCommAppFileList(commAppFileList);
         emvResponse.setRespAppFileList(respAppFileList);
 
-        lenient()
-                .doAnswer(invocation -> {
-                    ResultsListener listener = invocation.getArgument(1);
-                    listener.onSuccess(emvResponse);
-                    listener.onError("Cannot read card");
-                    return null;
-                }).when(this.mockEmvReader)
+        doAnswer(invocation -> {
+            ResultsListener listener = invocation.getArgument(1);
+            listener.onSuccess(emvResponse);
+            listener.onError("Cannot read card");
+            return null;
+        }).when(this.mockEmvReader)
                 .startEmvReader(any(), any());
     }
 
