@@ -2,6 +2,7 @@ package com.smn.emvcore.enums;
 
 public enum EmvCardType {
 
+
     //AIDs that need support
     //A00000000310100020
 
